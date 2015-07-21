@@ -1,5 +1,5 @@
 build:
 	jekyll build
 
-push:
+push: build
 	surge _site/ scottsmerchek.com

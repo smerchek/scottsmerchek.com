@@ -94,6 +94,7 @@ exclude:
   - CNAME
   - LICENSE
   - README.md
+  - Makefile
 
 # prose.io options
 prose:
