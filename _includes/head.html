@@ -6,7 +6,7 @@
   <title>{% if page.title %}{{ page.title }}{% else %}{{ site.title }}{% endif %}</title>
 
   <meta name="author" content="{{ site.author.name }}" />
-  
+
   {% if page.subtitle %}
   <meta name="description" content="{{ page.subtitle }}">
   {% endif %}
@@ -17,14 +17,14 @@
     {% for css in page.common-ext-css %}
       <link rel="stylesheet" href="{{ css }}" />
     {% endfor %}
-  {% endif %}  
-  
+  {% endif %}
+
   {% if page.common-css %}
     {% for css in page.common-css %}
       <link rel="stylesheet" href="{{ css | prepend: site.baseurl | replace: '//', '/' }}" />
     {% endfor %}
   {% endif %}
-  
+
   {% if page.common-googlefonts %}
     {% for font in page.common-googlefonts %}
 	  <link rel="stylesheet" href="//fonts.googleapis.com/css?family={{ font }}" />
@@ -35,30 +35,30 @@
     {% for css in page.ext-css %}
       <link rel="stylesheet" href="{{ css }}" />
     {% endfor %}
-  {% endif %}  
-  
+  {% endif %}
+
   {% if page.css %}
     {% for css in page.css %}
       <link rel="stylesheet" href="{{ css | prepend: site.baseurl | replace: '//', '/' }}" />
     {% endfor %}
   {% endif %}
-  
+
   {% if page.googlefonts %}
     {% for font in page.googlefonts %}
 	  <link rel="stylesheet" href="//fonts.googleapis.com/css?family={{ font }}" />
     {% endfor %}
   {% endif %}
-  
+
   <!-- Facebook OpenGraph tags -->
   <meta property="og:title" content="{% if page.title %}{{ page.title }}{% else %}{{ site.title }}{% endif %}" />
   <meta property="og:type" content="website" />
-  
+
   {% if page.id %}
   <meta property="og:url" content="{{ site.url }}{{ page.url }}/" />
   {% else %}
   <meta property="og:url" content="{{ site.url }}{{ page.url | remove: '/index.html' | remove: '.html' }}" />
   {% endif %}
-  
+
   {% if page.fb-img %}
   <meta property="og:image" content="{{ page.fb-img }}" />
   {% elsif site.avatar %}
@@ -66,5 +66,24 @@
   {% else %}
   <meta property="og:image" content="" />
   {% endif %}
-  
+
+   <!-- Twitter Card tags -->
+   <meta name="twitter:card" content="summary">
+   <meta name="twitter:site" content="smerchek">
+   <meta name="twitter:creator" content="smerchek">
+   <meta name="twitter:title" content="{% if page.title %}{{ page.title }}{% else %}{{ site.title }}{% endif %}">
+   <meta name="twitter:description" content="{% if page.description %}{{ page.description }}{% else %}{{ site.description }}{% endif %}">
+
+   {% if page.url %}
+   <meta name="twitter:url" content="{{ site.url }}{{ page.url }}">
+   {% endif %}
+
+   {% if page.fb-img %}
+   <meta name="twitter:image:src" content="{{ page.fb-img }}" />
+   {% elsif site.avatar %}
+   <meta name="twitter:image:src" content="{{ site.url }}{{ site.avatar }}" />
+   {% else %}
+   <meta name="twitter:image:src" content="" />
+   {% endif %}
+
 </head>
