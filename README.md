@@ -1,12 +1,14 @@
 # Beautiful Jekyll
 
+[![Circle CI](https://circleci.com/gh/smerchek/blog.svg?style=svg)](https://circleci.com/gh/smerchek/blog)
+
 **Beautiful Jekyll** is a ready-to-use template to help you create an awesome website quickly.  [Check out a demo](http://deanattali.com/beautiful-jekyll) of what you'll get after just two minutes or look at [my personal website](http://deanattali.com) to see it in use.
 
 This template is built on top of [Jekyll](http://jekyllrb.com/) and can be used for any [GitHub Pages](https://pages.github.com/) website.  If you don't know what Jekyll and GitHub Pages are, you can still use these instructions to build a site quickly, but it might make a little more sense if you read up on them just a little bit.
 
 Feel free to modify this in any way you'd like, but I would appreciate it if you don't remove the attribution to Beautiful Jekyll. I've noticed that several people have copied this website but deliberately removed the tiny phrase that gives me credit, and it feels a bit sad to not get credit for the countless hours I've put into making this what it is. Don't make me sad! :)
 
-If you need a bit of help or have comments, feel free to [contact me](http://deanattali.com/aboutme#contact). Even if you don't have anything important to say but found this useful, I'd love to [hear that as well](http://deanattali.com/aboutme#contact). 
+If you need a bit of help or have comments, feel free to [contact me](http://deanattali.com/aboutme#contact). Even if you don't have anything important to say but found this useful, I'd love to [hear that as well](http://deanattali.com/aboutme#contact).
 
 ## Prerequisites
 
@@ -15,12 +17,12 @@ If you need a bit of help or have comments, feel free to [contact me](http://dea
 
 ## Build your website in 3 steps
 
-Getting started is *literally* as easy as 1-2-3 :smile:   
+Getting started is *literally* as easy as 1-2-3 :smile:
 Scroll down to see the steps involved, but here is a 45-second GIF just as a reference as you work through the steps. You might need to wait a few seconds until the "video" gets back to its beginning.
 
 ![Installation steps](img/install-steps.gif)
 
-### 1. Fork this repository 
+### 1. Fork this repository
 
 (Assuming you are on this page and logged in to GitHub) Fork this repository by clicking the Fork button on the top right corner. Forking means that you now copied this whole project and all the files into your account.
 
@@ -71,7 +73,7 @@ subtitle: Here you'll find all the ways to get in touch with me
 
 You can look at the top of [`aboutme.md`](./aboutme.md) or [`index.html`](./index.html) as more examples.
 
-**Important takeaway: always add the YAML front matter to every page, which is two lines with three dashes. If you have any parameters, they go between the two lines.**    
+**Important takeaway: always add the YAML front matter to every page, which is two lines with three dashes. If you have any parameters, they go between the two lines.**
 If you don't include YAML then your file will not use the template.
 
 ## Features
@@ -104,18 +106,18 @@ Beautiful Jekyll lets you easily add Google Analytics to all your pages. This wi
 
 These are the main parameters you can place inside a page's YAML front matter that **Beautiful Jekyll** supports.
 
-Parameter   | Description
------------ | -----------
-layout      | What type of page this is (recommended options are `page`, `post`, or `minimal`)
-title       | Page or blog post title
-subtitle    | Short description of page or blog post
-comments    | If you want do add Disqus comments to a specific page, use `comments: true`. Comments are automatically enabled on blog posts, to turn comments off for a specific post, use `comments: false`. Comments only work if you set your Disqus id in the _config.yml file.
-js          | List of local JavaScript files to include in the page (eg. `/js/mypage.js`)
-ext-js      | List of external JavaScript files to include in the page (eg. `//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.2/underscore-min.js`)
-css         | List of local CSS files to include in the page
-ex-css      | List of external CSS files to include in the page
-googlefonts | List of Google fonts to include in the page (eg. `["Monoton", "Lobster"]`)
-fb-img      | If you want to share a page on Facebook, by default Facebook will use the first image it can find on the page.  If you want to specify an image to use when sharing the page on Facebook, then provide the image's URL here
+| Parameter   | Description                                                                                                                                                                                                                                                           |
+|:------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| layout      | What type of page this is (recommended options are `page`, `post`, or `minimal`)                                                                                                                                                                                      |
+| title       | Page or blog post title                                                                                                                                                                                                                                               |
+| subtitle    | Short description of page or blog post                                                                                                                                                                                                                                |
+| comments    | If you want do add Disqus comments to a specific page, use `comments: true`. Comments are automatically enabled on blog posts, to turn comments off for a specific post, use `comments: false`. Comments only work if you set your Disqus id in the _config.yml file. |
+| js          | List of local JavaScript files to include in the page (eg. `/js/mypage.js`)                                                                                                                                                                                           |
+| ext-js      | List of external JavaScript files to include in the page (eg. `//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.2/underscore-min.js`)                                                                                                                               |
+| css         | List of local CSS files to include in the page                                                                                                                                                                                                                        |
+| ex-css      | List of external CSS files to include in the page                                                                                                                                                                                                                     |
+| googlefonts | List of Google fonts to include in the page (eg. `["Monoton", "Lobster"]`)                                                                                                                                                                                            |
+| fb-img      | If you want to share a page on Facebook, by default Facebook will use the first image it can find on the page.  If you want to specify an image to use when sharing the page on Facebook, then provide the image's URL here                                           |
 
 ### RSS feed
 
@@ -133,7 +135,7 @@ To set up a GitHub Project page, simply fork this repository into a branch calle
 
 ### More advanced features
 
-I wrote [a blog post](http://deanattali.com/2015/03/12/beautiful-jekyll-how-to-build-a-site-in-minutes/) describing some more advanced features that I used in my website that are applicable to any Jekyll site.  It describes how I used a custom URL for my site (deanattali.com instead of daattali.github.io), how to add a Google-powered search into your site, and provides a few more details about having an RSS feed. 
+I wrote [a blog post](http://deanattali.com/2015/03/12/beautiful-jekyll-how-to-build-a-site-in-minutes/) describing some more advanced features that I used in my website that are applicable to any Jekyll site.  It describes how I used a custom URL for my site (deanattali.com instead of daattali.github.io), how to add a Google-powered search into your site, and provides a few more details about having an RSS feed.
 
 ### Credits
 

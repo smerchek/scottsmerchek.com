@@ -95,6 +95,7 @@ exclude:
   - LICENSE
   - README.md
   - Makefile
+  - vendor
 
 # prose.io options
 prose:

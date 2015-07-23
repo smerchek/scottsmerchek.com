@@ -1,5 +1,5 @@
 build:
-	jekyll build
+	bundle exec jekyll build
 
 push: test
 	surge _site/ scottsmerchek.com

@@ -1,0 +1,13 @@
+machine:
+  ruby:
+    version: 2.1.2
+
+test:
+  override:
+      - make test
+
+deployment:
+  production:
+    branch: master
+    commands:
+      - surge _site/ scottsmerchek.com
