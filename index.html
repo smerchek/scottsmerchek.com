@@ -1,52 +1,66 @@
 ---
-layout: page
-title: Hi, I'm Scott
-subtitle: I love learning and figuring things out. Here's where I'll write some of it down.
+layout: default
 ---
 
-<div class="main-explain-area jumbotron">
-  <p>I'm ready to start blogging again. Was my last post really over three years ago? </p>
-  <p>yikes.</p>
-  <p>Here's to blogging more frequently!</p>
-</div>
-
-<div class="posts-list">
-  {% for post in paginator.posts %}
-  <article class="post-preview">
-    <a href="{{ post.url | prepend: site.baseurl }}">
-	  <h2 class="post-title">{{ post.title }}</h2>
-
-	  {% if post.subtitle %}
-	  <h3 class="post-subtitle">
-	    {{ post.subtitle }}
-	  </h3>
-	  {% endif %}
-    </a>
-
-    <p class="post-meta">
-      Posted on {{ post.date | date: "%B %-d, %Y" }}
-    </p>
-
-    <div class="post-entry">
-      {{ post.content | truncatewords: 50 | strip_html}}
-	  <a href="{{ post.url | prepend: site.baseurl }}" class="post-read-more">[Read&nbsp;More]</a>
+<header class="header-page">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+	  <div class="page-heading">
+	    <h1>Hi, I'm Scott</h1>
+	    <hr class="small">
+	    <span class="page-subheading">I am constantly learning, and I hope to share some of that here.</span>
+	  </div>
     </div>
+  </div>
+</header>
 
-   </article>
-  {% endfor %}
+<div class="row">
+  <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <div class="main-explain-area jumbotron">
+        <p>I'm ready to start blogging again. Was my last post really over three years ago? </p>
+        <p>yikes.</p>
+        <p>Here's to blogging more frequently!</p>
+      </div>
+
+      <div class="posts-list">
+        {% for post in paginator.posts %}
+        <article class="post-preview">
+          <a href="{{ post.url | prepend: site.baseurl }}">
+      	  <h2 class="post-title">{{ post.title }}</h2>
+
+      	  {% if post.subtitle %}
+      	  <h3 class="post-subtitle">
+      	    {{ post.subtitle }}
+      	  </h3>
+      	  {% endif %}
+          </a>
+
+          <p class="post-meta">
+            Posted on {{ post.date | date: "%B %-d, %Y" }}
+          </p>
+
+          <div class="post-entry">
+            {{ post.content | truncatewords: 50 | strip_html}}
+      	  <a href="{{ post.url | prepend: site.baseurl }}" class="post-read-more">[Read&nbsp;More]</a>
+          </div>
+
+         </article>
+        {% endfor %}
+      </div>
+
+      {% if paginator.total_pages > 1 %}
+      <ul class="pager main-pager">
+        {% if paginator.previous_page %}
+        <li class="previous">
+          <a href="{{ paginator.previous_page_path | prepend: site.baseurl | replace: '//', '/' }}">&larr; Newer Posts</a>
+        </li>
+        {% endif %}
+        {% if paginator.next_page %}
+        <li class="next">
+          <a href="{{ paginator.next_page_path | prepend: site.baseurl | replace: '//', '/' }}">Older Posts &rarr;</a>
+        </li>
+        {% endif %}
+      </ul>
+      {% endif %}
+   </div>
 </div>
-
-{% if paginator.total_pages > 1 %}
-<ul class="pager main-pager">
-  {% if paginator.previous_page %}
-  <li class="previous">
-    <a href="{{ paginator.previous_page_path | prepend: site.baseurl | replace: '//', '/' }}">&larr; Newer Posts</a>
-  </li>
-  {% endif %}
-  {% if paginator.next_page %}
-  <li class="next">
-    <a href="{{ paginator.next_page_path | prepend: site.baseurl | replace: '//', '/' }}">Older Posts &rarr;</a>
-  </li>
-  {% endif %}
-</ul>
-{% endif %}
