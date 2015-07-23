@@ -3,7 +3,7 @@ layout: page
 title: About me
 ---
 
-My name is Scott Smerchek. I work in Kansas City for <a href="http://www.smrxt.com" target="_blank">SMRxT, Inc</a> (pronounced _smart_)
+My name is Scott Smerchek. I work in Kansas City for {% include smrxt.html %} (pronounced _smart_)
 crafting back-end services and APIs to process and interpret messages from
 innovative pill bottles with a weight sensor in them. Yes, I get to actually work
 with real IoT devices!
