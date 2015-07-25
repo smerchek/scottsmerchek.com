@@ -14,6 +14,7 @@ Our starting point is [circleci/docker-hello-google](https://github.com/circleci
 From the command line, it is really easy to [push docker images to the GCR](https://cloud.google.com/container-registry/#pushing_to_the_registry).
 
 For example:
+
 ```sh
 docker tag user/example-image gcr.io/your-project-id/example-image
 gcloud docker push gcr.io/your-project-id/example-image
