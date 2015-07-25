@@ -4,7 +4,7 @@ title: Pushing to Google Container Registry from CircleCI
 date: '2015-07-24 19:36'
 ---
 
-[CircleCI]() is a great build tool with a lot of flexibility. They even have a good [tutorial on interacting with docker](https://circleci.com/docs/docker) with a [special section](https://circleci.com/docs/docker#google-compute-engine-and-kubernetes) referencing Google Compute Engine and Kubernetes. The only slight difference here is that I want to deploy directly to [Google's Container Registry](https://cloud.google.com/container-registry/) (GCR) rather than deploy my own registry, which is slightly more involved. So, let's get started.
+[CircleCI](https://circleci.com) is a great build tool with a lot of flexibility. They even have a good [tutorial on interacting with docker](https://circleci.com/docs/docker) with a [special section](https://circleci.com/docs/docker#google-compute-engine-and-kubernetes) referencing Google Compute Engine and Kubernetes. The only slight difference here is that I want to deploy directly to [Google's Container Registry](https://cloud.google.com/container-registry/) (GCR) rather than deploy my own registry, which is slightly more involved. So, let's get started.
 
 Our starting point is [circleci/docker-hello-google](https://github.com/circleci/docker-hello-google), then a little help from this fork [bellkev/docker-hello-google](https://github.com/bellkev/docker-hello-google). These repos handle a lot of the other aspects of building a docker image, running, and testing it.
 
