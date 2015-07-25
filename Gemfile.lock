@@ -95,3 +95,4 @@ DEPENDENCIES
   jekyll
   liquid_pluralize
   liquid_reading_time
+  redcarpet

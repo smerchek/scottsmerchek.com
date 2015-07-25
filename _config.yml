@@ -70,10 +70,13 @@ google_analytics: "UA-21058983-2"
 
 # Output options (more information on Jekyll's site)
 timezone: "America/Chicago"
-markdown: kramdown
-highlighter: pygments
 permalink: /:year/:month/:day/:title
 paginate: 5
+
+markdown: redcarpet
+
+redcarpet:
+  extensions: ["tables", "autolink", "strikethrough", "space_after_headers", "with_toc_data", "fenced_code_blocks"]
 
 # Default YAML values (more information on Jekyll's site)
 defaults:
