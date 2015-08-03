@@ -6,10 +6,11 @@ categories:
   - hipaa
   - postgres
   - databases
-fb-img: http://scottsmerchek.com/img/crud-without-the-d.svg
+fb-img: http://scottsmerchek.com/img/crud-without-the-d.png
+description: If you are like me, you cringe every time you see .destroy in someone's ORM code. For most businesses, data is one of the most important assets. Here, we'll use soft deletes instead.
 ---
 
-If you are like me, you cringe every time you see `.destroy` in someone's ORM code. It is called **destroy** for a reason. For most businesses, your data is one of your most important assets. In the healthcare environment, we actually have a legal obligation to NOT destroy data and we must keep tidy audit logs, as well. So, *why* would you ever want to destroy your data? Okay, so maybe you want to clean out old logs or other cruft, but you should never delete data that is core to your business.
+If you are like me, you cringe every time you see `.destroy` in someone's ORM code. It is called **destroy** for a reason. For most businesses, your data is one of your most important assets. In the healthcare environment, we actually have a legal obligation to NOT destroy data, and we must keep tidy audit logs, as well. So, *why* would you ever want to destroy your data? Okay, so maybe you want to clean out old logs or other cruft, but you should never delete data that is core to your business.
 
 ## Compelling reasons to use soft deletes
 
