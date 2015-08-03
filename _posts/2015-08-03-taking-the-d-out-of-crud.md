@@ -79,7 +79,7 @@ SET removed_on = current_timestamp
 WHERE name = 'vance refrigeration';
 ```
 
-Now, if we try to add `vance refrigeration` back, we get a duplicate key volation error:
+Now, if we try to add `vance refrigeration` back, we get a duplicate key violation error:
 
 ```
 ERROR: duplicate key value violates unique constraint "customer_name_key" Detail: Key (name)=(vance refrigeration) already exists.
@@ -89,7 +89,7 @@ ERROR: duplicate key value violates unique constraint "customer_name_key" Detail
 
 To fix this in Postgres, we can use a [partial index](https://devcenter.heroku.com/articles/postgresql-indexes#partial-indexes) that only applies the unique constraint to the rows where `removed_on IS NULL`.
 
-So, we update our schema as follows, removing the inline `UNIQUE` and addind the partial index:
+So, we update our schema as follows, removing the inline `UNIQUE` and adding the partial index:
 
 ```sql
 CREATE TABLE customer (
@@ -141,6 +141,6 @@ WHERE name = 'vance refrigeration';
 
 ### Conclusion
 
-While it takes some extra work, it can be worth it depending on your business needs. For those of us in healthcare, this is a definitely worth it.
+While it takes some extra work, it can be worth it depending on your business needs. For those of us in healthcare, this is definitely worth it.
 
 Tomorrow, we will go one step further by extending this concept to soft updates.
