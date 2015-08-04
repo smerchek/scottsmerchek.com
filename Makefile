@@ -7,4 +7,5 @@ push: test
 test: build
 	bundle exec htmlproof ./_site \
 		--href-ignore https://www.facebook.com/scott.smerchek \
-		--href-ignore https://msdn.microsoft.com/en-us/library/cc280372.aspx
+		--href-ignore https://msdn.microsoft.com/en-us/library/cc280372.aspx \
+		--disable-external
