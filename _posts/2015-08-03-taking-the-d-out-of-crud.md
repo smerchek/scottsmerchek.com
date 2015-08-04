@@ -143,4 +143,4 @@ WHERE name = 'vance refrigeration';
 
 While it takes some extra work, it can be worth it depending on your business needs. For those of us in healthcare, this is definitely worth it.
 
-Tomorrow, we will go one step further by extending this concept to soft updates.
+Check out the [next post in this series]({% post_url 2015-08-04-taking-the-d-out-of-crud-with-soft-updates %}), where we go one step further by extending this concept to soft updates.
