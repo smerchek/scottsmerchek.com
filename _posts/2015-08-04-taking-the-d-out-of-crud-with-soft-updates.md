@@ -55,6 +55,7 @@ CREATE TABLE customer_history (
   version int,
   version_on timestamptz NOT NULL DEFAULT current_timestamp,
   version_by varchar(64) NOT NULL,
+  is_removed boolean NOT NULL
   PRIMARY KEY(customer_id, version)
 );
 
@@ -87,8 +88,8 @@ BEGIN
   NEW.version := OLD.version + 1;
   NEW.version_on := now();
 
-  INSERT INTO customer_history (customer_id, name, version, version_on, version_by)
-  VALUES (OLD.customer_id, OLD.name, OLD.version, OLD.version_on, OLD.version_by);
+  INSERT INTO customer_history (customer_id, name, version, version_on, version_by, is_removed)
+  VALUES (OLD.customer_id, OLD.name, OLD.version, OLD.version_on, OLD.version_by, OLD.is_removed);
 
   RETURN NEW;
 END;
@@ -105,13 +106,14 @@ BEFORE UPDATE ON customer
 
 ### Updates as usual
 
-Updating a table is the same as usual, but don't forget to include the `version_by`.
+Updating a table is almost the same as usual, but don't forget to include the `version_by`. We can prevent conflicts by ensuring that the version passed in is still the current version. In this case, no rows would be updated. Either the application code needs to handle this, throwing a conflict error, or the update can be [put into a stored procedure](http://stackoverflow.com/a/5448988) that throws an error.
 
 ```sql
 UPDATE customer
 SET name = 'sabre',
     version_by = 'Jo Bennett'
-WHERE name = 'dunder mifflin';
+WHERE name = 'dunder mifflin'
+   AND version = 1;
 ```
 
 The `customer` table should now look like this:
@@ -123,21 +125,80 @@ The `customer` table should now look like this:
 
 And the `customer_history` table should look like this:
 
-| customer_id | name           | version | version_on               | version_by    |
-|:------------|:---------------|:--------|:-------------------------|:--------------|
-| 1           | dunder mifflin | 1       | August, 04 2015 11:46:57 | David Wallace |
+| customer_id | name           | version | version_on               | version_by    | is_removed |
+|:------------|:---------------|:--------|:-------------------------|:--------------|:-----------|
+| 1           | dunder mifflin | 1       | August, 04 2015 11:46:57 | David Wallace | false      |
 
-So, we have our history saved and we can see who created Dunder Mifflin, as well as who updated it and when. As always, here is the [SQL Fiddle](http://sqlfiddle.com/#!15/08d79).
+So, we have our history saved and we can see who created Dunder Mifflin, as well as who updated it and when. As always, here is the [SQL Fiddle](http://sqlfiddle.com/#!15/b4cb6).
 
 Note for this fiddle: _SQL fiddle splits queries on semi-colons, but I needed semi-colons inside the functions. So, I had to use `//` to delimit each query in the schema section._
 
-As an exercise, write some queries using the `customer` and `customer_history` tables to answer the following:
+### Querying
 
-1. find any customer that was named `dunder mifflin` at some point in time
-2. what is Sabre's original name and when was that company created
+To find the most current version of an entity is simple. In our example, the `customer` table always represents the most current version of the entity. We still need to check for `is_removed`, though.
 
-_You can check your work using the [SQL Fiddle](http://sqlfiddle.com/#!15/2eff4)._
+```sql
+SELECT *
+FROM customer
+WHERE is_removed IS FALSE;
+```
+
+To find the first version of an entity, we want to select from `customer` or `customer_history` where the `version = 1`.
+
+```sql
+WITH original_customer AS (
+	SELECT customer_id, name, version, version_on, is_removed
+	FROM customer
+	WHERE version = 1
+
+	UNION ALL
+
+	SELECT customer_id, name, version, version_on, is_removed
+	FROM customer_history ch
+	WHERE version = 1
+)
+SELECT *
+FROM original_customer
+```
+
+To get the version of an entity at a specific point in time requires a little more work, but it is still possible. We want to select the latest version of customer from either the `customer` or `customer_history` tables where that version of the customer existed before the given time.
+
+```sql
+WITH customer_in_time AS (
+   SELECT DISTINCT ON(customer_id) customer_id, name, version, version_on, is_removed
+   FROM (
+      SELECT customer_id, name, version, version_on, is_removed
+      FROM customer
+      WHERE version_on < '2015-08-05 06:48:52-05'
+
+      UNION ALL
+
+      SELECT customer_id, name, version, version_on, is_removed
+      FROM customer_history ch
+      WHERE version_on < '2015-08-05 06:48:52-05'
+      ORDER BY version_on DESC
+   ) c
+   ORDER BY c.customer_id, c.version DESC
+)
+SELECT *
+FROM customer_in_time
+```
+
+Using `DISTINCT ON` and `ORDER BY` here allows us to easily get the latest version of a customer from the resulting rows matching the `version_on` filter.
 
 ## Conclusion
 
-If changes to your data _really_ matter, consider using soft updates in addition to soft deletes. For those of us in healthcare, this is a necessity. Of course, you can also consider alternatives like [CQRS](http://martinfowler.com/bliki/CQRS.html) and [Datomic](http://www.datomic.com). CQRS is the idea of storing all the changes to an entity rather than the current state of the entity. Datomic is an immutable data store, so you get soft everything for free. I'm very interested in the potential of Datomic and systems like Datomic for this very reason (for which they might be part of a future blog post). Nevertheless, we're using an RDBMS for better or worse, and even though it takes effort to keep history in a traditional RDBMS, it's worth it for us.
+If changes to your data _really_ matter, consider using soft updates in addition to soft deletes. For those of us in healthcare, this is a necessity. Of course, you can also consider alternatives like [Event Sourcing](http://martinfowler.com/eaaDev/EventSourcing.html) and [Datomic](http://www.datomic.com). CQRS is the idea of storing all the changes to an entity rather than the current state of the entity. Datomic is an immutable data store, so you get soft everything for free. I'm very interested in the potential of Datomic and systems like Datomic for this very reason (for which they might be part of a future blog post). Nevertheless, we're using an RDBMS for better or worse, and even though it takes effort to keep history in a traditional RDBMS, it's worth it for us.
+
+#### Notable References
+
+After posting to Hacker News, there were a lot of great suggestions and references to other implementations and examples. Check them out now at [Hacker News](https://news.ycombinator.com/item?id=10016799).
+
+As I have time to review some of these, I'll either update this post or write some follow up articles.
+
+#### Updates 2015-08-06
+
+1. Removed exercises and added some example queries instead, including how to make use of the history table
+2. Corrected reference of CQRS to be Event Sourcing.
+3. Added `is_removed` to history table. Necessary because one could undo a deletion.
+4. Improve `UPDATE` query to use `version` to prevent concurrency issues.
