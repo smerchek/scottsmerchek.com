@@ -7,6 +7,26 @@ categories:
    - containers
 ---
 
+<div class="alert alert-success" role="alert">
+   <strong>Update: March 30, 2016</strong>
+
+   <p>CircleCI has been adding some baked in support for Google Cloud, negating much of this blog post.</p>
+
+   <p>Please check out the links below:</p>
+
+   <ul>
+      <li>
+         The `gcloud` tool is now <a href="https://circleci.com/docs/environment">included in each CircleCI instance</a> No more manual installation!
+      </li>
+      <li>
+         They have some more <a href="https://circleci.com/docs/google-auth">complete docs on gcloud authentication</a>
+      </li>
+      <li>
+         They have other docs on using GCP too, so <a href="https://circleci.com/docs/search">search for gcloud</a> to find them.
+      </li>
+   </ul>
+</div>
+
 [CircleCI](https://circleci.com) is a great build tool with a lot of flexibility. They even have a good [tutorial on interacting with docker](https://circleci.com/docs/docker) with a [special section](https://circleci.com/docs/docker#google-compute-engine-and-kubernetes) referencing Google Compute Engine and Kubernetes. The only slight difference here is that I want to deploy directly to [Google's Container Registry](https://cloud.google.com/container-registry/) (GCR) rather than deploy my own registry, which is slightly more involved. So, let's get started.
 
 Our starting point is [circleci/docker-hello-google](https://github.com/circleci/docker-hello-google), then a little help from this fork [bellkev/docker-hello-google](https://github.com/bellkev/docker-hello-google). These repos handle a lot of the other aspects of building a docker image, running, and testing it.
