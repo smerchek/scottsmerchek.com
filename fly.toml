@@ -1,4 +1,4 @@
-app = "scottsmerchek-com-8587"
+app = "smerchek-web"
 kill_signal = "SIGINT"
 kill_timeout = 5
 processes = [ ]
