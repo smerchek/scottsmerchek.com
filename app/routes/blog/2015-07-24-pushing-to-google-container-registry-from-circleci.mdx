@@ -11,11 +11,13 @@ categories:
    <strong>Update: March 30, 2016</strong>
 
 {' '}
+
 <p>
   CircleCI has been adding some baked in support for Google Cloud, negating much of this blog post.
 </p>
 
 {' '}
+
 <p>Please check out the links below:</p>
 
    <ul>
@@ -39,7 +41,7 @@ From the command line, it is really easy to [push docker images to the GCR](http
 
 For example:
 
-```sh
+```bash
 docker tag user/example-image gcr.io/your-project-id/example-image
 gcloud docker push gcr.io/your-project-id/example-image
 ```
@@ -56,13 +58,13 @@ Once you've created your service account, set up the following environment varia
 
 On OSX and Linux, you can get the base64 encoded version like this:
 
-```sh
+```bash
 cat project_name-xxxxx.json | base64
 ```
 
 Now we can write a script that authenticates us with `gcloud` and name it `script/auth-gcloud.sh`:
 
-```sh
+```bash
 #! /bin/bash
 echo $GCLOUD_KEY | base64 --decode > gcloud.p12
 gcloud auth activate-service-account $GCLOUD_EMAIL --key-file gcloud.p12

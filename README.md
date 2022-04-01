@@ -30,13 +30,13 @@ Not a fan of bits of the stack? Fork it, change it, and use `npx create-remix --
 
 - Initial setup: _If you just generated this project, this step has been done for you._
 
-  ```sh
+  ```bash
   npm run setup
   ```
 
 - Start dev server:
 
-  ```sh
+  ```bash
   npm run dev
   ```
 
@@ -65,7 +65,7 @@ Prior to your first deployment, you'll need to do a few things:
 
 - Sign up and log in to Fly
 
-  ```sh
+  ```bash
   fly auth signup
   ```
 
@@ -73,20 +73,20 @@ Prior to your first deployment, you'll need to do a few things:
 
 - Create two apps on Fly, one for staging and one for production:
 
-  ```sh
+  ```bash
   fly create scottsmerchek-com-8587
   fly create scottsmerchek-com-8587-staging
   ```
 
   - Initialize Git.
 
-  ```sh
+  ```bash
   git init
   ```
 
 - Create a new [GitHub Repository](https://repo.new), and then add it as the remote for your project. **Do not push your app yet!**
 
-  ```sh
+  ```bash
   git remote add origin <ORIGIN_URL>
   ```
 
@@ -94,7 +94,7 @@ Prior to your first deployment, you'll need to do a few things:
 
 - Add a `SESSION_SECRET` to your fly app secrets, to do this you can run the following commands:
 
-  ```sh
+  ```bash
   fly secrets set SESSION_SECRET=$(openssl rand -hex 32) --app scottsmerchek-com-8587
   fly secrets set SESSION_SECRET=$(openssl rand -hex 32) --app scottsmerchek-com-8587-staging
   ```
@@ -103,7 +103,7 @@ Prior to your first deployment, you'll need to do a few things:
 
 - Create a persistent volume for the sqlite database for both your staging and production environments. Run the following:
 
-  ```sh
+  ```bash
   fly volumes create data --size 1 --app scottsmerchek-com-8587
   fly volumes create data --size 1 --app scottsmerchek-com-8587-staging
   ```
