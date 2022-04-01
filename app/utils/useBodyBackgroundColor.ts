@@ -49,5 +49,6 @@ export function useHTMLBackgroundColor() {
 
       return handle.htmlBackgroundColor;
     })
-    .filter(Boolean)[0];
+    .filter(Boolean)
+    .at(-1);
 }

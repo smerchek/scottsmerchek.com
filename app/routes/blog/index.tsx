@@ -1,6 +1,11 @@
 import { Link, LoaderFunction, useLoaderData } from 'remix';
 import * as crud from './taking-the-d-out-of-crud.mdx';
 import * as crudWithUpdates from './taking-the-d-out-of-crud-with-soft-updates.mdx';
+import { HandleHTMLBackgroundColor } from '~/utils/useBodyBackgroundColor';
+
+export const handle: HandleHTMLBackgroundColor = {
+  htmlBackgroundColor: 'bg-gray-50',
+};
 
 type LoaderData = {
   highlightedPosts: typeof crud[];
