@@ -18,7 +18,7 @@ export const links: LinksFunction = () => {
 export default function BlogLayout() {
   return (
     <>
-      <article className="prose mx-auto py-20">
+      <article className="prose mx-auto px-4 py-20">
         <Outlet />
       </article>
     </>
