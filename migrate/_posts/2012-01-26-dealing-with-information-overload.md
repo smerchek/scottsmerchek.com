@@ -1,0 +1,58 @@
+---
+layout: post
+title: "Dealing with Information Overload (and Improving Effectiveness) - The Takeaway"
+categories: [codemash, productivity, professionalism]
+---
+Scott Hanselman's ([@shanselman](https://twitter.com/#!/shanselman)) talk was probably one of the most immediately applicable talks at CodeMash. It was full of ideas, insights, and actionable items. In this article, I'll try to tease out the main points of Scott's presentation along with the action items. I'll also detail my own answers to the questions and how I'm dealing with information overload.
+
+> **Effectiveness**: doing the right things -- goal-oriented
+>
+> **Efficiency**: doing things in an economical way -- process-oriented
+
+There is a difference between effectiveness and efficiency. I'm all about efficiency, but without effectiveness, efficiency is wasted. I can be really efficient at reading the latest blog posts and some books, but if that reading doesn't provide value then it is not effective.
+
+## Psychic Weight
+There is a "psychic weight" upon us where we constantly iterate over the things that we need to do. If we try to be aware of everything, then it will bog us down. Some things just need to be "let go".
+### Dropping Packets
+Scott advocates "dropping packets" (get rid of the cruft and ignore the unimportant). One way that I've dropped packets is that I don't commit to reading every tweet that shows up on my stream. It's okay if I skip some; it's not the end of the world. I actually remember what a burden it was to "catch up" on 18 hours of tweets that I missed. It's okay -- let it go.
+### Find a Trusted Source
+Put stuff in a trusted source to get it out of your mind. That trusted source could be [Evernote][evernote], Google tasks, or a even a small moleskin. It just needs to be your default place to go for jotting down to-dos and other things to remember. I've done this occasionally, but I've switched between trusted sources too much. I think I'm going to stick with Evernote. It's very freeing to just jot stuff down and not have to keep remembering it. Evernote has search built-in, which is even better.
+
+## Signal vs Noise
+Scott suggests sorting the signal from the noise and getting rid of the noise. In order to do this, one must identify their data streams (the information inputs into their life). Some examples are twitter, email, push notifications from anything, TV episodes, chores around the house, any other social network. Then, if life gets busy, drop the least important things.
+
+Scott boldly stated "Twitter is never important," which honestly took be aback for a second. I thought to myself, "this coming from @shanselman? Not possible". But really, it's not. Twitter is not that important and it can be dropped if other things are more important.
+
+An easy way to sort email is by setting up rules and filters for Outlook/Gmail. Scott has a great blog post on setting up some good filters for Outlook [here][filters].
+
+####Data streams I've identified in my life (in order of perceived importance):
+
+1. Spending time with Christie (my wife)
+*  Living out my Christian Faith
+*  Handling finances and house obligations
+*  Hanging out with friends/neighbors
+*  Reading non-fiction books
+*  Growing in software development skills
+*  Volunteering/Open Source
+*  Reading 'for-pleasure' books
+*  Watching TV Shows
+*  Reading Twitter (Keeping up with news/current events and finding good articles to read)
+*  Reading Twitter for the sake of Twitter
+*  Playing Skyrim
+
+## Improvements at Work
+
+We can really improve our efficiency at work merely by being aware of the "number and type of internal things we do that interrupt ourselves" and "the number and type of external interruptions." How many times have you just opened a new tab to go to Twitter or click on some random web page. I know I do (sometimes I even open a page and then close it... then do it again). I have no idea why, but knowing that I can distract myself in this way is a good step towards preventing it.
+
+Scott also recommends the [pomodoro technique][pomodoro] which is a 25 minute unit of time to focus. In this way you can "schedule work sprints," then take a short break. I've yet to put this into practice, but it certainly sounds like an effective idea.
+
+## Summary
+
+Dealing with all of the data that bombards us everyday is hard. Every social media application, blog, or website is vying for our attention. We need to be selective with the things that we give our attention to. Have you thought about how to prioritize your data streams? Feel free to leave a comment below about some of your action items.
+
+You can find more productivity tips from Scott Hanselman [here][productivity-posts].
+
+[filters]: http://www.hanselman.com/blog/TheThreeMostImportantOutlookRulesForProcessingMail.aspx
+[evernote]: http://www.evernote.com
+[pomodoro]: http://www.pomodorotechnique.com/
+[productivity-posts]: http://www.hanselman.com/blog/CategoryView.aspx?category=Productivity
