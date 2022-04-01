@@ -26,11 +26,13 @@ By convention, apps expose an internal `/metrics` endpoint on port `9091`. So, l
 
 ## Adding our own metrics, exposed via Express.js
 
-First, we'll install the express prometheus middleware. We'll also add the optional `prometheus-gc-stats` package, so we can also expose the node.js garbage collection metrics.
+First, we'll install the express prometheus middleware. ~We'll also add the optional `prometheus-gc-stats` package, so we can also expose the node.js garbage collection metrics.~
+
+Note: `prometheus-gc-stats` [is no longer required](https://github.com/SimenB/node-prometheus-gc-stats/issues/72), but we cannot use the latest v14 `prom-client` yet. So, we'll use v13 for now.
 
 ```bash
-npm i express-prometheus-middleware prometheus-gc-stats
-npm i --save-dev @types/express-prometheus-middlewar
+npm i express-prometheus-middleware@1.2.0 prom-client@13.2.0
+npm i --save-dev @types/express-prometheus-middleware@1.2.1
 ```
 
 Next, we'll add the middleware to our express `server.ts`. An important thing to note here is that we don't want to expose `/metrics` on our public app!
