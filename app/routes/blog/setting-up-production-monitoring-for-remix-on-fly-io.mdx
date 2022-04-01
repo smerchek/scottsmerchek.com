@@ -100,6 +100,37 @@ app.use(
 );
 ```
 
+You can test this locally, by running the following:
+
+```bash
+ENABLE_METRICS=true npm run dev
+```
+
+We can then request the metrics with a basic GET request, so we can see the metrics we've exposed.
+
+```bash
+curl http://localhost:9091/metrics
+```
+
+You should see something like this (plus a lot more):
+
+```
+# HELP nodejs_heap_space_size_available_bytes Process heap space size available from Node.js in bytes.
+# TYPE nodejs_heap_space_size_available_bytes gauge
+nodejs_heap_space_size_available_bytes{space="read_only"} 0
+nodejs_heap_space_size_available_bytes{space="old"} 53632
+nodejs_heap_space_size_available_bytes{space="code"} 296064
+nodejs_heap_space_size_available_bytes{space="map"} 184040
+nodejs_heap_space_size_available_bytes{space="large_object"} 0
+nodejs_heap_space_size_available_bytes{space="code_large_object"} 0
+nodejs_heap_space_size_available_bytes{space="new_large_object"} 1031072
+nodejs_heap_space_size_available_bytes{space="new"} 939928
+
+# HELP nodejs_version_info Node.js version info.
+# TYPE nodejs_version_info gauge
+nodejs_version_info{version="v16.14.1",major="16",minor="14",patch="1"} 1
+```
+
 Deploy the app, and these metrics should start being collected by Fly.io's promotheus instance. Let's set up Grafana so we can take a look at them.
 
 ## Setting up Grafana
