@@ -7,8 +7,10 @@ module.exports = {
   mdx: async () => {
     const rehypeSlug = await import('rehype-slug');
     const rehypePrism = await import('rehype-prism-plus');
+    const remarkGfm = await import('remark-gfm');
 
     return {
+      remarkPlugins: [remarkGfm.default],
       rehypePlugins: [rehypeSlug.default, rehypePrism.default],
     };
   },
