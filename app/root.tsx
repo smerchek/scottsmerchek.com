@@ -3,6 +3,8 @@ import type { LinksFunction, MetaFunction, LoaderFunction } from 'remix';
 
 import tailwindStylesheetUrl from './styles/tailwind.css';
 import { getUser } from './session.server';
+import Nav from './components/shared/Nav';
+import { useHTMLBackgroundColor } from './utils/useBodyBackgroundColor';
 
 export const links: LinksFunction = () => {
   return [
@@ -13,7 +15,7 @@ export const links: LinksFunction = () => {
 
 export const meta: MetaFunction = () => ({
   charset: 'utf-8',
-  title: 'Remix Notes',
+  title: 'Scott Smerchek',
   viewport: 'width=device-width,initial-scale=1',
 });
 
@@ -28,13 +30,16 @@ export const loader: LoaderFunction = async ({ request }) => {
 };
 
 export default function App() {
+  const htmlBackgroundColor = useHTMLBackgroundColor() ?? 'bg-gray-50';
+
   return (
-    <html lang="en" className="h-full">
+    <html lang="en" className={`h-full ${htmlBackgroundColor}`}>
       <head>
         <Meta />
         <Links />
       </head>
       <body className="h-full">
+        <Nav />
         <Outlet />
         <ScrollRestoration />
         <Scripts />
