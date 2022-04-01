@@ -20,7 +20,9 @@ export default function Nav() {
             <div className="flex">
               <div className="flex flex-shrink-0 items-center">
                 <Link to="/">
-                  <span className="text-lg text-gray-800">Scott Smerchek</span>
+                  <span className="text-lg text-gray-800">
+                    Scott <span className="hidden sm:inline-block">Smerchek</span>
+                  </span>
                 </Link>
               </div>
               <div className="-my-px ml-6 flex space-x-8">

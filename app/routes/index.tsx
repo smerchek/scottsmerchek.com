@@ -2,10 +2,7 @@ export default function Index() {
   return (
     <>
       <div className="relative overflow-hidden bg-gray-50">
-        <div
-          className="hidden sm:absolute sm:inset-y-0 sm:block sm:h-full sm:w-full"
-          aria-hidden="true"
-        >
+        <div className="absolute inset-y-0 block h-full w-full" aria-hidden="true">
           <div className="relative mx-auto h-full max-w-7xl">
             <svg
               className="absolute right-full translate-y-1/4 translate-x-1/4 transform lg:translate-x-1/2"
@@ -67,19 +64,19 @@ export default function Index() {
         </div>
 
         <div className="relative pt-6 pb-16 sm:pb-24">
-          <main className="mx-auto mt-16 max-w-7xl px-4 sm:mt-24">
-            <div className="flex items-center">
+          <main className="mx-auto mt-8 max-w-7xl px-4 sm:mt-24">
+            <div className="flex flex-col items-center sm:flex-row">
               <img
                 src="/images/profile.jpg"
                 alt="head shot of Scott"
                 className="inline-block h-40 w-40  rounded-full md:h-96 md:w-96"
               />
-              <div className="ml-10 text-center">
+              <div className="mt-5 text-center sm:mt-0 sm:ml-10">
                 <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">
-                  <span className="block xl:inline">Hi,</span>{' '}
-                  <span className="block text-blue-600 xl:inline">I'm Scott</span>
+                  <span className="block xl:inline">Hi, I'm </span>{' '}
+                  <span className="block text-blue-600 xl:inline">Scott</span>
                 </h1>
-                <p className="mx-auto mt-3 max-w-md text-base text-gray-500 sm:text-lg md:mt-5 md:max-w-3xl md:text-xl">
+                <p className="mx-auto mt-3 max-w-md text-left text-base leading-7 text-gray-500 sm:text-lg md:mt-5 md:max-w-3xl md:text-center md:text-xl">
                   I build{' '}
                   <a
                     className="border-b-4 border-[#F17125] pb-1"
