@@ -1,9 +1,9 @@
-import { Form, json, useLoaderData, Outlet, Link, NavLink } from "remix";
-import type { LoaderFunction } from "remix";
+import { Form, json, useLoaderData, Outlet, Link, NavLink } from 'remix';
+import type { LoaderFunction } from 'remix';
 
-import { requireUserId } from "~/session.server";
-import { useUser } from "~/utils";
-import { getNoteListItems } from "~/models/note.server";
+import { requireUserId } from '~/session.server';
+import { useUser } from '~/utils';
+import { getNoteListItems } from '~/models/note.server';
 
 type LoaderData = {
   noteListItems: Awaited<ReturnType<typeof getNoteListItems>>;
@@ -48,11 +48,11 @@ export default function NotesPage() {
             <p className="p-4">No notes yet</p>
           ) : (
             <ol>
-              {data.noteListItems.map((note) => (
+              {data.noteListItems.map(note => (
                 <li key={note.id}>
                   <NavLink
                     className={({ isActive }) =>
-                      `block border-b p-4 text-xl ${isActive ? "bg-white" : ""}`
+                      `block border-b p-4 text-xl ${isActive ? 'bg-white' : ''}`
                     }
                     to={note.id}
                   >

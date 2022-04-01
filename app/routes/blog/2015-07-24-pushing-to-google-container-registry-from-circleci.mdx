@@ -3,16 +3,20 @@ layout: post
 title: Pushing to Google Container Registry from CircleCI
 date: '2015-07-24 19:36'
 categories:
-   - cloud
-   - containers
+  - cloud
+  - containers
 ---
 
 <div class="alert alert-success" role="alert">
    <strong>Update: March 30, 2016</strong>
 
-   <p>CircleCI has been adding some baked in support for Google Cloud, negating much of this blog post.</p>
+{' '}
+<p>
+  CircleCI has been adding some baked in support for Google Cloud, negating much of this blog post.
+</p>
 
-   <p>Please check out the links below:</p>
+{' '}
+<p>Please check out the links below:</p>
 
    <ul>
       <li>
@@ -45,7 +49,7 @@ However, in a build environment, we can't just use `gcloud auth login` with our 
 Once you've created your service account, set up the following environment variables in CircleCI:
 
 | name                       | value                                                  |
-|:---------------------------|:-------------------------------------------------------|
+| :------------------------- | :----------------------------------------------------- |
 | GCLOUD_EMAIL               | `{string_of_characters}@developer.gserviceaccount.com` |
 | GCLOUD_KEY                 | base64-encoded version of `project_name-xxxxx.json`    |
 | EXTERNAL_REGISTRY_ENDPOINT | `us.gcr.io/{project-id}`                               |

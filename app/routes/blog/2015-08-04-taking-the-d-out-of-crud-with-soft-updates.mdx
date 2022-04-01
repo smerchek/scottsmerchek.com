@@ -119,14 +119,14 @@ WHERE name = 'dunder mifflin'
 The `customer` table should now look like this:
 
 | customer_id | name                | version | version_on               | version_by | created_on               | is_removed |
-|:------------|:--------------------|:--------|:-------------------------|:-----------|:-------------------------|:-----------|
+| :---------- | :------------------ | :------ | :----------------------- | :--------- | :----------------------- | :--------- |
 | 2           | vance refrigeration | 1       | August, 04 2015 11:46:57 | Bob Vance  | August, 04 2015 11:46:57 | false      |
 | 1           | sabre               | 2       | August, 04 2015 11:52:45 | Jo Bennett | August, 04 2015 11:46:57 | false      |
 
 And the `customer_history` table should look like this:
 
 | customer_id | name           | version | version_on               | version_by    | is_removed |
-|:------------|:---------------|:--------|:-------------------------|:--------------|:-----------|
+| :---------- | :------------- | :------ | :----------------------- | :------------ | :--------- |
 | 1           | dunder mifflin | 1       | August, 04 2015 11:46:57 | David Wallace | false      |
 
 So, we have our history saved and we can see who created Dunder Mifflin, as well as who updated it and when. As always, here is the [SQL Fiddle](http://sqlfiddle.com/#!15/b4cb6).
