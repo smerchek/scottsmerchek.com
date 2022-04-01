@@ -34,7 +34,7 @@ function isHandleHTMLBackgroundColor(handle: unknown): handle is HandleHTMLBackg
  * export let handle = { htmlBackgroundColor: 'bg-gray-50' };
  */
 export function useHTMLBackgroundColor() {
-  return useMatches()
+  const validMatches = useMatches()
     .map(match => {
       if (!match.handle) {
         return false;
@@ -49,6 +49,7 @@ export function useHTMLBackgroundColor() {
 
       return handle.htmlBackgroundColor;
     })
-    .filter(Boolean)
-    .at(-1);
+    .filter(Boolean);
+
+  return validMatches.length > 0 ? validMatches[validMatches.length - 1] : undefined;
 }
