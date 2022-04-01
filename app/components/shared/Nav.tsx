@@ -1,4 +1,3 @@
-/* This example requires Tailwind CSS v2.0+ */
 import { Link, NavLink } from 'remix';
 
 const navigation = [
