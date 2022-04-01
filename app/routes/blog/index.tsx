@@ -44,8 +44,8 @@ export default function Index() {
                   className="no-underline focus:outline-none"
                 >
                   <span className="absolute inset-0" aria-hidden="true" />
-                  <p className="text-md font-medium text-gray-900">{post.attributes.title}</p>
-                  <p className="text-sm text-gray-500">{post.attributes.description}</p>
+                  <p className="text-md font-medium text-gray-900">{post.attributes.meta.title}</p>
+                  <p className="text-sm text-gray-500">{post.attributes.meta.description}</p>
                 </Link>
               </div>
             </div>
@@ -68,8 +68,8 @@ export default function Index() {
                   className="no-underline focus:outline-none"
                 >
                   <span className="absolute inset-0" aria-hidden="true" />
-                  <p className="text-md font-medium text-gray-900">{post.attributes.title}</p>
-                  <p className="text-sm text-gray-500">{post.attributes.description}</p>
+                  <p className="text-md font-medium text-gray-900">{post.attributes.meta.title}</p>
+                  <p className="text-sm text-gray-500">{post.attributes.meta.description}</p>
                 </Link>
               </div>
             </div>
