@@ -10,6 +10,8 @@ fb-img: 'http://scottsmerchek.com/img/crud-without-the-d.png'
 description: "Soft deletes are nice, but what about updates? Updates are pretty destructive too, so let's take a look at implementing soft updates on top of soft deletes."
 ---
 
+# Taking the 'D' Out of CRUD with Soft Updates
+
 In the [previous post](/blog/taking-the-d-out-of-crud), we took a look at implementing soft deletes, so that we aren't _destroying_ our data. But what about updates? Updates are pretty destructive too, since they are essentially deleting a row and replacing it. At the very least, most would want an audit log of some sort to know who updated that particular row. In healthcare, if someone updates the patient's name, that is a big deal. We need to make sure that track the history of any given entity.
 
 If you haven't read [the previous post on soft deletes](/blog/taking-the-d-out-of-crud), go do that now. We'll build on top of our understanding of soft deletes to implement soft updates.
