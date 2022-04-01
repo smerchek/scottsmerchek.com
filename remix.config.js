@@ -6,21 +6,10 @@ module.exports = {
   ignoredRouteFiles: ['.*', '**/*.css', '**/*.test.{js,jsx,ts,tsx}'],
   mdx: async () => {
     const rehypeSlug = await import('rehype-slug');
-    const remarkPrism = await import('remark-prism');
+    const rehypePrism = await import('rehype-prism-plus');
 
     return {
-      remarkPlugins: [
-        [
-          remarkPrism.default,
-          {
-            plugins: [
-              'prismjs/plugins/diff-highlight/prism-diff-highlight',
-              'prismjs/plugins/line-numbers/prism-line-numbers',
-            ],
-          },
-        ],
-      ],
-      rehypePlugins: [rehypeSlug.default],
+      rehypePlugins: [rehypeSlug.default, rehypePrism.default],
     };
   },
 };

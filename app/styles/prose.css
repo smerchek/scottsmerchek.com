@@ -1,7 +1,7 @@
 /* code syntax highlighting */
 /* dark is default: */
 pre {
-  --base00: #011627; /* editor background */
+  --base00: hsl(220, 13%, 18%); /* editor background */
   --base01: #2d2d2d; /* unused (currently) */
   --base02: #424242; /* unused (currently) */
   --base03: #637777; /* code comments */
@@ -59,14 +59,19 @@ pre {
   color: var(--color-blueGray-500);
 }
 
-.prose pre[data-line-numbers='true']:not([data-lang='sh']) {
+.prose pre:not([data-lang='sh']) {
   padding-left: 0rem;
   padding-right: 0rem;
 }
 
-.prose pre[data-line-numbers='true']:not([data-lang='sh']) [data-line-number]:before {
+.prose pre .code-line:not(.line-number) {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.prose pre:not([data-lang='sh']) .line-number:before {
   padding-left: 0rem;
-  content: attr(data-line-number);
+  content: attr(line);
   text-align: right;
   display: inline-block;
   width: 3.5rem;
@@ -77,10 +82,7 @@ pre {
   background-color: var(--base00);
 }
 
-.prose
-  pre[data-line-numbers='true']:not([data-lang='sh'])
-  [data-line-number]:before
-  .codeblock-line[data-highlight='true']:before {
+.prose pre:not([data-lang='sh']) .line-number:before .code-line.highlight-line:before {
   background: var(--base0E);
 }
 
@@ -94,15 +96,15 @@ pre {
   min-width: 100%;
 }
 
-.codeblock-line {
+.code-line {
   display: block;
   position: relative;
   padding-right: 1rem;
 }
 
-.codeblock-line[data-highlight='true']:after,
-.prose pre[data-remove] .codeblock-line[data-remove='true']:after,
-.prose pre[data-add] .codeblock-line[data-add='true']:after {
+.code-line.highlight-line:after,
+.prose pre[data-remove] .code-line[data-remove='true']:after,
+.prose pre[data-add] .code-line[data-add='true']:after {
   content: ' ';
   position: absolute;
   left: 0;
@@ -112,27 +114,27 @@ pre {
   pointer-events: none;
 }
 
-.codeblock-line[data-highlight='true']:before {
+.code-line.highlight-line:before {
   border-left: 6px solid var(--base0E);
 }
 
-.codeblock-line[data-highlight='true']:after {
+.code-line.highlight-line:after {
   background: var(--base0E);
 }
 
-.prose pre[data-remove] .codeblock-line[data-remove='true']:before {
+.prose pre[data-remove] .code-line[data-remove='true']:before {
   content: '-';
 }
 
-.prose pre[data-remove] .codeblock-line[data-remove='true']:after {
+.prose pre[data-remove] .code-line[data-remove='true']:after {
   background: var(--color-red-500);
 }
 
-.prose pre[data-add] .codeblock-line[data-add='true']:before {
+.prose pre[data-add] .code-line[data-add='true']:before {
   content: '+';
 }
 
-.prose pre[data-add] .codeblock-line[data-add='true']:after {
+.prose pre[data-add] .code-line[data-add='true']:after {
   background: var(--color-green-500);
 }
 

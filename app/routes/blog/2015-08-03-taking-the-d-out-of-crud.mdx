@@ -91,7 +91,7 @@ To fix this in Postgres, we can use a [partial index](https://devcenter.heroku.c
 
 So, we update our schema as follows, removing the inline `UNIQUE` and adding the partial index:
 
-```sql
+```sql {7-8} showLineNumbers
 CREATE TABLE customer (
    customer_id serial PRIMARY KEY,
    name text NOT NULL,
