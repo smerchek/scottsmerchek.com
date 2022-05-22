@@ -1,0 +1,176 @@
+---
+layout: post
+meta:
+  title: 'Migrating from Meteor.js to Remix in 2022'
+  description: ''
+date: '2022-05-23 13:23'
+categories:
+  - remix
+  - fly.io
+  - monitoring
+---
+
+# Migrating from Meteor.js to Remix in 2022
+
+At [UDisc](https://udisc.com/about-us), we just launched the new [UDisc.com](https://udisc.com), built with Remix and deployed on [Fly.io](https://fly.io/)!
+
+## Background
+
+UDisc started on the App Store and didn't even have a website, for a while. When the website was introduced, it was just a landing page for the Apps. However, as the team and business continued to grow, more functionality was added to the website to make UDisc's data more accessible. UDisc was still a team of only two to three people at this time, so the choice of using Meteor.js worked fairly well and allowed them to be productive.
+
+Yet, as our team quickly grew, it became clear that Meteor.js was not going to be the best fit going forward. There was already a lot of functionality built though, so migrating wasn't going to be straightforward and a complete greenfield rewrite is almost never feasible.
+
+## Deciding on a new platform
+
+Shortly after I started in January 2021, I started thinking about options for a new platform to move away from Meteor. Fortunately, all of the frontend code was built with React, so most of that code could still be reused to some degree. Everyone was pretty comfortable with React, so it didn't make much sense to look at alternative view layers. It also made sense to stick with Node.js (or at least javascript-based) backends, since we also have a large exposure to MongoDb
+
+- React frontend
+- Old version of MaterialUI
+- Javascript backend (converting to Typescript was my #1 priority)
+- MongoDb
+- Meteor.js
+  - Heavy use of websockets (Meteor.js)
+  - [Auth tokens stored in localStorage](https://blog.meteor.com/why-meteor-doesnt-use-session-cookies-e988544f52c9) (I strongly disagree with this choice, btw)
+- A handful of pages in Next.js / GraphQL
+
+## Challenges
+
+I knew there would be several main challenges to solve:
+
+1. Seamless switchover with minimal downtime
+2. Partial migration, to reduce scope of project
+3. Set up new design that feels consistent enough, but doesn't blow up scope of project.
+4. Converting legacy code w/o existing tests is always risky
+
+Meteor.js operates very differently from more modern frameworks, so there wasn't an incremental migration path to Remix like [others have done](link to sergio blog on next.js migration). We would need to keep running the legacy Meteor app until all pages were migrated.
+
+The most important thing in any effort like this is business continuity. We can't break existing functionality for our users relying on UDisc to find courses, run leagues, and manage their course.
+
+## Solutions
+
+### A seamless switchover
+
+I had two main questions to answer to execute a successful switchover:
+
+1. How can we run both Remix and Meteor side-by-side?
+2. How can share session/authentication data between both apps?
+
+#### Running Remix and Meteor side-by-side
+
+We had already experimented with running Next.js for a small number of pages, proxied from Meteor to seem like they were part of the app. I knew we could use this same strategy for Remix, but if we continued to proxy from Meteor, we would lose most of the benefits that Remix brings to the table, like cookie-based authentication, better server-side rendering, and easy global deployments.
+
+So, I made the decision that we had to make Remix the primary host of udisc.com in order to make this successful. Using a combination of the catch-all slug routing and node-http-proxy, we were able to rewrite any request to a legacy page to the legacy app, without the user realizing.
+
+/callout?
+Meteor has too many dynamic routes, that we could not pre-program the list of routes to proxy. Unfortunately, that only leaves the option of a catchall route.
+
+Since Meteor uses websockets, we also needed node-http-proxy to proxy any of those requests.
+
+Below is the proxy catch-all route at `app/routes/$.tsx` This was inspired from the [deno proxy example](insert-link). It's great to be able to solve most of the proxy behavior with idiomatic Remix / web standards, so that this code is portable to any of the Remix deploy targets.
+
+```tsx
+export async function proxyRequest(request: Request, origin: string): Promise<Response> {
+  const url = new URL(request.url);
+  const destination = url.toString().replace(url.origin, origin);
+
+  const [, hostValue] = origin.split('//');
+  const headers = new Headers(request.headers);
+  headers.set('host', hostValue);
+
+  return await fetch(destination, {
+    headers: headers,
+    method: request.method,
+    body: request.body,
+  });
+}
+
+export const loader: LoaderFunction = async ({ request }) => {
+  if (!process.env.LEGACY_METEOR_HOST) {
+    throw new Error('LEGACY_METEOR_HOST is missing');
+  }
+
+  return proxyRequest(request, process.env.LEGACY_METEOR_HOST);
+};
+
+export const action: ActionFunction = async ({ request }) => {
+  if (!process.env.LEGACY_METEOR_HOST) {
+    throw new Error('LEGACY_METEOR_HOST is missing');
+  }
+
+  return proxyRequest(request, process.env.LEGACY_METEOR_HOST);
+};
+```
+
+For using node-http-proxy, we add this to the express server:
+
+```tsx
+const meteorProxy = createProxyMiddleware(['/websocket/**', '/__meteor__/**'], {
+  target: process.env.LEGACY_METEOR_HOST,
+  changeOrigin: true, // Required to work with TLS certificates on the legacy domain.
+  ws: true, // websockets enabled
+});
+
+app.use(meteorProxy);
+```
+
+_Why not use a proxy like Nginx?_
+
+I definitely considered this solution, but for our small team, we want to keep operations to a minimum. So, fewer moving parts to understand in this case was better. If we see poor performance or other issues with the node proxy solution, we may reconsider this in the future.
+
+#### Sharing session/authentication data between Remix and Meteor
+
+There wasn't a great solution here. Since Meteor uses `localStorage` to store the user's session token, we can't just share a cookie. It's really frustrating, because using localStorage for auth, means you can't know the user is logged in during the server render!
+
+Since we are making Remix the primary host, so we can use cookie-based auth as the primary login mechanism. This gives us all the benefits of this approach in any page built with Remix. In order to continue to support Meteor, we open the same websocket using [simple-ddp](insert ddp link) and _also_ login the user to Meteor when they submit the Remix login form. It's possible that these login states get out of sync, but that was a trade-off worth making.
+
+We already had a custom login method for Meteor using standard bcrypt password comparisons with the user's data stored in Mongo, so thankfully, we did not have to reimplement any of the core authentication logic.
+
+### Partial Migration
+
+Knowing that we can't migrate _everything_, which pages should we prioritize? One of the motivations for porting to Remix was to address our abysmal Lighthouse scores and page performance in Meteor, _especially_ for our public-facing, high-traffic pages like the [/blog](https://udisc.com/blog), [/courses](https://udisc.com/courses), and [/subscribe](https://udisc.com/subscribe). These pages account from ~[insert metric of % of page views] of UDisc's daily traffic and are a crucial part of our SEO strategy.
+
+Aside from those pages, we had to rebuild the login, sign-up, and reset password flow to support the Remix auth strategy. New Navigation and Footers to work in Remix and maintain consistency going back-and-forth. Lastly, we made sure to migrate all the Next.js experimental pages so we could archive that project.
+
+We used a somewhat time-box strategy here, porting as many pages in priority-order as we could in the given timeframe, knowing that we can continue porting pages over time and any pages that aren't ported, will continue to work.
+
+Going forward, the goal is for all new development to happen in Remix, of course. But this means new features to legacy code, will ideally include porting the old code to Remix first, and then adding the new functionality there. The developer experience is so much better in Remix, none of us have any qualms about porting something, even if it's just to add a small improvement!
+
+### New Design
+
+We had already begun the process of implementing a new design system and moving away from Materail UI. So, it was natural to simply ban Material UI from the new project and convert any existing components from there JSS styles to TailwindCSS. We were able to leverage TailwindUI to help get a nice set of pre-built components out of the box, tweaked slightly to fit our brand.
+
+This definitely added additional complexity and time, since we could no longer copy-paste components, fixing only the data-fetching logic. No, we often had to re-implement the components entirely using modern standards or perhaps keep the same structure, converting only the styling.
+
+The end result works well, since we made only incremental improvements and at least maintained parity. Bigger brand/design changes will come later as we continue to grow into that system.
+
+### Converting legacy code
+
+What's to say, it's challenging and risky to migrate legacy code, especially if you are rewriting a lot of it. Especially when there are basically zero tests in the legacy code base.
+
+I spent a lot of time running both versions of the app side-by-side, including learning about some features I didn't even know about!
+
+We added some cypress tests and route tests to validate critical areas, but we are still far from having test coverage where I'd like to see it.
+
+## Flipping the Switch
+
+Did it go off without a hitch? Almost. We knew to expect some downtime since we were switching the DNS for udisc.com to a new location. So, we picked a "low-traffic" time, though that doesn't mean "no traffic" when you have a global user-base.
+
+Ok, the new DNS is pointing to Fly.io, should be good... oh wait, the page still isn't loading. Whoops, even though I had pre-scaled our Fly.io servers in multiple regions to handle the onslaught of traffic, I had forgotten to change our hard_limit on connections in the fly.toml. For node.js apps, it's recommended to use a requests limit instead of connections, because node.js can actually handle many connections. Our limit was still on the default of 25 connections, and Fly will start queueing connections at that point! 😬
+
+Thankfully, I knew what the values needed to be, so a quick deploy (Fly.io's docker caching helps soooo much to make deploys snappy), and we were finally back up.
+
+### Forcing everyone to log-off
+
+One downside of switching to the new authentication mechanism, was that we couldn't keep user's session logged in within Remix. So, rather than leave users sessions active only in the legacy app, we deleted all login tokens so Meteor would be forced to revalidate them and redirect everyone to the login page.
+
+### Follow-ups
+
+Over the next few days, we would find and fix a handful of issues from the deploy that we didn't detect in testing. All-in-all, it was quite the successful launch, just in time for [#RemixConf 2022](https://remix.run/conf).
+
+## What's Next?
+
+We can really start to focus on adding new functionality that has been stalled for a bit due to the migration effort. And this new functionality will be built in Remix, of course!
+
+Our team is really looking forward to keep diving deep with Remix. Working in Remix day-to-day is really a night-and-day difference from slogging through our Meteor repo.
+
+If there are any aspects of this migration that you'd like to me to elaborate on, [let me know](https://twitter.com/smerchek)!

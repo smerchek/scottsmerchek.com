@@ -1,4 +1,5 @@
 import { Link, LoaderFunction, useLoaderData } from 'remix';
+import * as remixMigration from './migrating-from-meteor-to-remix-in-2022.mdx';
 import * as flyMonitoring from './setting-up-production-monitoring-for-remix-on-fly-io.mdx';
 import * as crud from './taking-the-d-out-of-crud.mdx';
 import * as crudWithUpdates from './taking-the-d-out-of-crud-with-soft-updates.mdx';
@@ -14,7 +15,7 @@ type LoaderData = {
 };
 
 export const loader: LoaderFunction = async () => {
-  const recentPosts = [flyMonitoring];
+  const recentPosts = [remixMigration, flyMonitoring];
   const highlightedPosts = [crud, crudWithUpdates];
 
   return {
