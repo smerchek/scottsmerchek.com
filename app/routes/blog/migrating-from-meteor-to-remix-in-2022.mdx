@@ -2,7 +2,7 @@
 layout: post
 meta:
   title: 'Migrating from Meteor.js to Remix in 2022'
-  description: ''
+  description: 'We successfully switched from Meteor.js to Remix, but there were many challenges to solve along the way. This post is a summary of the challenges we faced and solutions we implemented to make the switchover as painless as possible.'
 date: '2022-05-23 13:23'
 categories:
   - remix
@@ -66,7 +66,7 @@ Meteor has too many dynamic routes, that we could not pre-program the list of ro
 
 Since Meteor uses websockets, we also needed node-http-proxy to proxy any of those requests.
 
-Below is the proxy catch-all route at `app/routes/$.tsx` This was inspired from the [deno proxy example](insert-link). It's great to be able to solve most of the proxy behavior with idiomatic Remix / web standards, so that this code is portable to any of the Remix deploy targets.
+Below is the proxy catch-all route at `app/routes/$.tsx`. It's great to be able to solve most of the proxy behavior with idiomatic Remix / web standards, so that this code is portable to any of the Remix deploy targets.
 
 ```tsx
 export async function proxyRequest(request: Request, origin: string): Promise<Response> {
@@ -121,13 +121,13 @@ I definitely considered this solution, but for our small team, we want to keep o
 
 There wasn't a great solution here. Since Meteor uses `localStorage` to store the user's session token, we can't just share a cookie. It's really frustrating, because using localStorage for auth, means you can't know the user is logged in during the server render!
 
-Since we are making Remix the primary host, so we can use cookie-based auth as the primary login mechanism. This gives us all the benefits of this approach in any page built with Remix. In order to continue to support Meteor, we open the same websocket using [simple-ddp](insert ddp link) and _also_ login the user to Meteor when they submit the Remix login form. It's possible that these login states get out of sync, but that was a trade-off worth making.
+Since we are making Remix the primary host, so we can use cookie-based auth as the primary login mechanism. This gives us all the benefits of this approach in any page built with Remix. In order to continue to support Meteor, we open the same websocket using [simpleddp](https://github.com/Gregivy/simpleddp) and _also_ login the user to Meteor when they submit the Remix login form. It's possible that these login states get out of sync, but that was a trade-off worth making.
 
 We already had a custom login method for Meteor using standard bcrypt password comparisons with the user's data stored in Mongo, so thankfully, we did not have to reimplement any of the core authentication logic.
 
 ### Partial Migration
 
-Knowing that we can't migrate _everything_, which pages should we prioritize? One of the motivations for porting to Remix was to address our abysmal Lighthouse scores and page performance in Meteor, _especially_ for our public-facing, high-traffic pages like the [/blog](https://udisc.com/blog), [/courses](https://udisc.com/courses), and [/subscribe](https://udisc.com/subscribe). These pages account from ~[insert metric of % of page views] of UDisc's daily traffic and are a crucial part of our SEO strategy.
+Knowing that we can't migrate _everything_, which pages should we prioritize? One of the motivations for porting to Remix was to address our abysmal Lighthouse scores and page performance in Meteor, _especially_ for our public-facing, high-traffic pages like the [/blog](https://udisc.com/blog), [/courses](https://udisc.com/courses), and [/subscribe](https://udisc.com/subscribe). These pages account from ~37% of UDisc's daily traffic and are a crucial part of our SEO strategy.
 
 Aside from those pages, we had to rebuild the login, sign-up, and reset password flow to support the Remix auth strategy. New Navigation and Footers to work in Remix and maintain consistency going back-and-forth. Lastly, we made sure to migrate all the Next.js experimental pages so we could archive that project.
 
