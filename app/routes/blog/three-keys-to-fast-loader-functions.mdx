@@ -1,0 +1,152 @@
+---
+layout: post
+meta:
+  title: 'Three Key Steps to Fast Loader Functions'
+  description: "Don't fall for these common mistakes. Instead, make sure you follow these three key steps to write performant loader functions."
+date: '2022-04-01 13:23'
+categories:
+  - remix
+  - backend
+  - promises
+---
+
+# Three Key Steps to Fast Loader Functions
+
+Remix has opened the door to easily working with the full stack. The data you need for that dashboard or user profile page is at your fingertips with just a few database fetches in the loader function, and everything is working great! However, you may realize that it's not quite as fast as you'd like.
+
+Sometimes, accessing the data you need may just require a slow database query. But, most of the time, I notice that folks could speed up their loader functions with a few quick tweaks to their fetching logic.
+
+## 1. Parallelize your database queries
+
+With `async` and `await`, it is now easier than ever to make your asyncronous code read like synchronous code, but this can lead to long wait times as your code executes each async query in serial (one after the other).
+
+```typescript showLineNumbers
+// ❌ These queries are all executed in serial.
+// A -> B -> C -> Finished
+export const loader: LoaderFunction = async () => {
+  const a = await fetchA();
+  const b = await fetchB();
+  const c = await fetchC();
+
+  return {
+    a,
+    b,
+    c,
+  };
+};
+
+// ✅ These queries are all executed in parallel.
+// (A, B, C) -> Finished
+export const loader: LoaderFunction = async () => {
+  const [a, b, c] = await Promise.all([fetchA(), fetchB(), fetchC()]);
+
+  return {
+    a,
+    b,
+    c,
+  };
+};
+```
+
+This is common enough, that there is even a [Remix Utils helper](https://github.com/sergiodxa/remix-utils#promisehash) to do this (but using an object via `promiseHash` instead of an array with `Promise.all`).
+
+## 2. Avoid the "N+1" problem
+
+This issue is so common amongst ORMs, GraphQL, and other databases, that it has its own special name. The "N+1" problem is when you have a query that returns a list of items (`1`), and you also need to fetch some related information about each item in the list (`N`) -- Thus `N+1`. I once consulted on a project where the home page was executing more than 60 separate queries to the database _every page load_ just to display a list of ~3-5 items (no wonder the page was so slow!).
+
+```typescript showLineNumbers
+// ❌ A new db request is made for each item in the list! (N+1 = the number of items + the query to get the items)
+// Get Items -> Get Item Detail #1 -> Get Item Detail #... -> Get Item Detail #50 -> Finished
+export const loader: LoaderFunction = async () => {
+  const items = await getItems();
+
+  for (const item of items) {
+    const detail = await getItemDetail(item.id);
+    item.detail = detail;
+  }
+
+  return {
+    items,
+  };
+};
+
+// ✅ This time, only two queries are made.
+// Get Items -> Get All Item Details -> Finished
+export const loader: LoaderFunction = async () => {
+  const items = await getItems();
+  const details = await getAllItemDetails(items.map(item => item.id));
+
+  for (const item of items) {
+    item.detail = details[item.id];
+  }
+
+  return {
+    items,
+  };
+};
+```
+
+The specific implementation will depend on how you access your data. Modern ORMs [like Prisma](https://www.prisma.io/docs/guides/performance-and-optimization/query-optimization-performance#solving-the-n1-problem) can help with this, but it's important that you understand how many queries are being made.
+
+## 3. Prevent Overfetching of Data
+
+With Remix, you only need to fetch the minimum amount of data necessary to render the page. [Prisma also makes this easy](https://www.prisma.io/docs/concepts/components/prisma-client/select-fields) and most other tools allow you to limit the fields being returned from the database. With some document database like MongoDb, you will get all of the fields by default, so you have to intentionally limit the fields.
+
+And you can even take this one step further in Remix, since you can manipulate the data returned from the database before it is returned.
+
+```typescript showLineNumbers
+// ❌ Fetching all the data from the db
+const allItems = await Items.find({});
+const items = allItems.filter(item => item.status === 'active');
+
+// ✅ Better: Only fetching items with status 'active'
+// ❌ Still fetching all the fields from the db
+const items = await Items.find({ status: 'active' });
+
+// ✅ Better: Only fetching items with status 'active' AND only fetching the fields we need
+// ❌ The entire `extraDetail` field is being returned, even though we only need one `bit` of it
+const items = await Items.find({ status: 'active' }, { projection: { id: 1, name: 1, extraDetail: 1 } });
+
+// ✅ Best: Only fetching items with status 'active' AND only fetching the fields we need AND manipulating the data before it is returned
+// If extraDetail is a large object, we may not need to send the entire thing back to the client.
+const items = await Items.find({ status: 'active' }, { projection: { id: 1, name: 1, extraDetail: 1 } });
+return {
+  items: items.map({item} => ({
+    id: item.id,
+    name: item.name,
+    bitFromExtraDetail: item.extraDetail.bit,
+  })),
+}
+```
+
+## Bonus: Experimental Deferred Support in Remix
+
+The Remix team is working towards this new Deferred API to take advantage of the new streaming features in React 18. It's still new (as of 2022-05-31, it is only available via the `deferred` npm tag), but it's very promising.
+
+```typescript showLineNumbers
+// ❌ reallyLongQuery has to finish before the user sees any results
+export const loader: LoaderFunction = async () => {
+  const [items, longQueryResult] = await Promise.all([getItems(), getReallyLongQuery()]);
+
+  return json({
+    items,
+    longQueryResult,
+  });
+};
+
+// ✅ Send back items right away, and allow the longQueryResult to load later
+export const loader: LoaderFunction = async () => {
+  const items = await getItems();
+
+  return deferred({
+    items,
+    longQueryResult: getReallyLongQuery(), // no await here makes it deferred
+  });
+};
+```
+
+You can learn more in [this PR](https://github.com/remix-run/remix/pull/2708) or check out the teaser towards the end of Ryan Florence's [Reactathon talk - When To Fetch: Remixing React Router](https://www.youtube.com/watch?v=95B8mnhzoCM).
+
+## 🚀
+
+Hopefully, you've found some ways to make your Remix app even faster (or really any backend API). You can find me on the [Remix Discord](https://discord.com/invite/remix) or [on Twitter](https://twitter.com/smerchek).
