@@ -20,6 +20,8 @@ Sometimes, accessing the data you need may just require a slow database query. B
 
 With `async` and `await`, it is now easier than ever to make your asyncronous code read like synchronous code, but this can lead to long wait times as your code executes each async query in serial (one after the other).
 
+By using `Promise.all`, we can make all the queries execute _at the same time_, so we only have to wait for the query that takes the longest to finish.
+
 ```typescript showLineNumbers
 // ❌ These queries are all executed in serial.
 // A -> B -> C -> Finished
@@ -53,6 +55,8 @@ This is common enough, that there is even a [Remix Utils helper](https://github.
 ## 2. Avoid the "N+1" problem
 
 This issue is so common amongst ORMs, GraphQL, and other databases, that it has its own special name. The "N+1" problem is when you have a query that returns a list of items (`1`), and you also need to fetch some related information about each item in the list (`N`) -- Thus `N+1`. I once consulted on a project where the home page was executing more than 60 separate queries to the database _every page load_ just to display a list of ~3-5 items (no wonder the page was so slow!).
+
+By making a single query to fetch all details for all items at once, we can get all the data in just two queries, and then stitch the data together ourselves.
 
 ```typescript showLineNumbers
 // ❌ A new db request is made for each item in the list! (N+1 = the number of items + the query to get the items)
