@@ -15,23 +15,26 @@
     "astro": "astro",
     "check": "astro check",
     "typecheck": "astro check",
-    "deploy": "astro build && wrangler deploy",
-    "test": "node scripts/test-build.mjs"
+    "deploy": "npm run validate && wrangler deploy && npm run smoke",
+    "test": "node scripts/test-build.mjs",
+    "validate": "npm run check && npm test && wrangler deploy --dry-run",
+    "smoke": "node scripts/smoke.mjs"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.10",
+    "@astrojs/markdown-satteri": "^0.4.0",
     "@astrojs/mdx": "^8.0.0",
     "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.7.4",
     "@tailwindcss/typography": "^0.5.16",
     "@tailwindcss/vite": "^4.0.0",
-    "astro": "^7.2.10",
+    "astro": "^7.3.1",
     "tailwindcss": "^4.0.0"
   },
   "devDependencies": {
-    "@types/node": "^22.0.0",
+    "@types/node": "^24.13.3",
     "typescript": "^5.7.0",
-    "wrangler": "^4.128.0"
+    "wrangler": "^4.129.0"
   },
   "engines": {
     "node": ">=22.12.0"

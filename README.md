@@ -1,110 +1,91 @@
 # scottsmerchek.com
 
-Personal portfolio and blog for Scott Smerchek, built with **[Astro](https://astro.build/)**, **[Tailwind CSS v4](https://tailwindcss.com/)**, **MDX**, and deployed to **[Cloudflare Workers Static Assets](https://developers.cloudflare.com/workers/static-assets/)**.
+Scott Smerchek's personal site and blog, built with Astro, MDX, and Tailwind CSS. Astro generates static files; Cloudflare Workers Static Assets serves them. There is no application server or database to maintain.
 
-## Features
+Production: https://scottsmerchek.com
 
-- ⚡ **Zero-Friction Publishing**: Drop a Markdown or MDX file into `src/content/blog/` and it automatically builds, formats, and indexes with RSS and sitemap.
-- 🎨 **Light & Dark Mode**: Seamless toggle respecting system preference with zero flash of unstyled theme (FOUC).
-- 🚀 **Blazing Performance**: Pure static generation (zero client-side JS overhead by default), hosted on Cloudflare's global edge network.
-- 💻 **Syntax Highlighting**: Shiki dual-theme (GitHub Light / One Dark Pro) highlighting rendered server-side.
-- 📡 **RSS & Sitemap**: Automatically generated `/rss.xml`, `/feed.xml`, and `/sitemap-index.xml`.
-- 🔀 **Backwards Compatible Redirects**: Legacy date-based URLs (`/:year/:month/:date/:slug` -> `/blog/:slug`) handled at the edge via `public/_redirects`.
+Preview: https://scottsmerchek-com.scott-smerchek.workers.dev
 
----
+## Publishing a post
 
-## How to Publish a Blog Post
-
-Publishing a new article requires **zero code modifications**:
-
-1. Create a new file in `src/content/blog/<slug>.md` (or `.mdx`):
+1. Use Node 24 (`nvm use`) and install the locked dependencies with `npm ci`.
+2. Create `src/content/blog/your-post-slug.md` or `.mdx`. Use a lowercase, hyphenated filename; it becomes the public URL `/blog/your-post-slug/`.
 
 ```markdown
 ---
-title: "Your Post Title"
-description: "A brief summary for SEO and feed aggregators"
-pubDate: "2026-09-02"
+title: "Your post title"
+description: "A short summary for search results and RSS"
+pubDate: "2026-09-07"
 categories:
-  - "remix"
-  - "web"
-draft: false
+  - web
+draft: true
 ---
 
-Your content in Markdown or MDX here...
+Write your post here.
 ```
 
-2. Commit and push to `main`:
+3. Run `npm run dev` to preview the site. Draft posts are excluded from the site, including development pages and feeds. To preview the article locally, temporarily set `draft: false`; restore it before committing if it is not ready to publish.
+4. When ready, set `draft: false`, run `npm run validate`, and commit and push the post. Review a branch/PR first when useful.
+5. Run `npm run deploy` from the reviewed commit on `main`. **Pushing alone does not currently publish:** GitHub CI verifies the build, but no deployment token is configured yet.
+
+The homepage, blog index, RSS feeds (`/rss.xml` and `/feed.xml`), and sitemap update at build time. Optional metadata includes `updatedDate`, `tags`, and `categories`. A future `pubDate` does not schedule publication: `draft` is the publication switch. Keep published filenames stable; if you rename one, add an explicit 301 in `public/_redirects`.
+
+Images go in `public/images/` and can be referenced as `/images/filename.png`. Give images descriptive alt text. Markdown uses syntax highlighting automatically; use MDX when the post needs components.
+
+## Commands
+
+| Command | Purpose |
+| --- | --- |
+| `npm run dev` | Local Astro development server |
+| `npm run check` | Type-check Astro and validate content |
+| `npm run build` | Generate `dist/` |
+| `npm run preview` | Preview the generated Astro build |
+| `npm run preview:cf` | Serve `dist/` with local Cloudflare routing and headers |
+| `npm test` | Build regression tests, including draft exclusion and feed aliases |
+| `npm run validate` | Type checks, regression builds, and Wrangler deployment dry run |
+| `npm run deploy` | Validate, deploy, then verify production |
+| `npm run smoke` | Compare production with the existing local `dist/` and check routes |
+
+The regression suite creates a temporary draft fixture and finishes with a clean production build. Avoid running concurrent builds/tests in the same checkout. If a test is interrupted, check for `src/content/blog/migration-draft-regression.md` before retrying.
+
+## Deployment and routing
+
+Worker `scottsmerchek-com` belongs to the personal Cloudflare account specified in `wrangler.jsonc`. Both `scottsmerchek.com` and `www.scottsmerchek.com` are Worker custom domains managed by that file. The DNS cutover completed September 7, 2026; the old Fly machines are left for manual removal.
+
+Authenticate locally with `npx wrangler login`, then use `npm run deploy`. This validates before upload and checks the deployed homepage against the local build, published posts, feeds, headers, 404s, legacy redirects, and canonical-host redirects afterward. Smoke checks retry briefly for propagation; a failed smoke check reports a failure but does not roll back automatically.
+
+Cloudflare's zone-level **Redirect Rules** entry `Redirect from WWW to Root [Template]` (ID `45cd3de155464e1bbe9500d5c48523d6`) handles HTTPS `www` to apex with a 301 and preserves paths and query strings. HTTP `www` first upgrades to HTTPS, then redirects to apex. This rule lives in the Cloudflare dashboard, separately from Wrangler. Do not remove it when editing Worker domains. Legacy article redirects are in `public/_redirects`; cache and security headers are in `public/_headers`.
+
+### Enabling automatic deployments
+
+Choose one deployment system to avoid duplicate deploys:
+
+- **GitHub Actions:** add a Cloudflare deployment API token as the repository secret `CLOUDFLARE_API_TOKEN`. The account ID is already in `wrangler.jsonc`. The existing workflow validates every push/PR and deploys `main` when the secret exists. Without it, CI explicitly reports that deployment was skipped. PRs never deploy production.
+- **Cloudflare Builds:** connect the existing Worker under Settings → Builds to `smerchek/scottsmerchek.com`, production branch `main`, with Node 24. Build command: `npm run validate`; deploy command: `npx wrangler deploy && npm run smoke`. Leave the GitHub deployment secret unset if using Cloudflare Builds.
+
+The Cloudflare Builds connection and creation of its deployment token have not been approved/completed in this setup. No Fly secret is used by the new workflow. The old repository `FLY_API_TOKEN` can be removed when retiring Fly.
+
+For a bad content release, revert the offending commit, validate, and redeploy. Cloudflare also retains deployment versions for operational rollback; follow its current rollback instructions and verify production afterward.
+
+## Dependency maintenance
+
+`.github/dependabot.yml` checks npm packages and GitHub Actions weekly. Compatible npm minor/patch updates are grouped; major updates stay separate. PRs run the same validation workflow, and nothing auto-merges. Node type definitions stay on the Node 24 major until the runtime is deliberately upgraded.
+
+For a manual maintenance pass:
 
 ```bash
-git add src/content/blog/your-post-title.md
-git commit -m "feat: publish new post on your topic"
-git push origin main
+npm outdated
+npm audit
+npm update
+npm run validate
 ```
 
-After configuring one of the deployment methods below, pushes to `main` can build and publish the site. Pushing the review branch runs verification only.
+Review the lockfile diff and framework release notes, then preview an article in light/dark themes and at desktop/mobile widths. Commit `package.json` and `package-lock.json` together. Deploy the reviewed update and run the live checks. `npm ci` in CI installs the exact lockfile rather than resolving new versions.
 
----
+Astro and its integrations should be upgraded together when their compatibility requirements change. `@astrojs/markdown-satteri` is declared directly because the config imports it. TypeScript remains on 5.x; the installed Astro checker declares compatibility with TypeScript 5/6, not 7. Review that peer requirement before a major upgrade. Node 24 is selected by `.nvmrc`; change runtime, CI/build settings, and Node type definitions together.
 
-## Local Development
-
-Use Node.js 24 LTS (`nvm use`, also used by CI); minimum supported version is 22.12.0.
-
-```bash
-# Install dependencies
-npm ci
-
-# Start development server
-npm run dev
-
-# Type check & validate content collections
-npm run check
-
-# Build static output to dist/
-npm run build
-
-# Preview static build locally
-npm run preview
-```
-
----
-
-## Cloudflare Deployment
-
-We use **Cloudflare Workers with Static Assets** configured in [`wrangler.jsonc`](./wrangler.jsonc), for this static site. No server adapter, database, Fly secrets, or persistent volume is needed.
-
-Production runs on Worker `scottsmerchek-com` in the personal Cloudflare account. The DNS cutover completed on September 7, 2026, and HTTPS, all 12 posts, feeds, sitemap, legacy redirects, and 404 handling were verified. `www.scottsmerchek.com` redirects to the apex and preserves paths and query strings.
-
-Both custom domains are managed in `wrangler.jsonc`. The preview URL is https://scottsmerchek-com.scott-smerchek.workers.dev. Fly machines are retained for manual removal. Automatic deployment is not yet enabled; choose one automation method below to avoid duplicate deployments.
-
-### Option 1: Deploy with Wrangler CLI (Fastest)
-
-```bash
-# Authenticate with Cloudflare (one-time)
-npx wrangler login
-
-# Build and deploy to Cloudflare
-npm run deploy
-```
-
-`npm run deploy` deploys the static build and reconciles both custom domains from `wrangler.jsonc`.
-
-### Option 2: Automatic Git Deployments via Cloudflare Dashboard
-
-1. In Cloudflare Dashboard, navigate to **Compute (Workers) &rarr; Create Application &rarr; Workers &rarr; Import from Git**.
-2. Select your `scottsmerchek.com` repository.
-3. Build command: `npm run build`; deploy command: `npx wrangler deploy`. Assets directory `dist` is configured in `wrangler.jsonc`.
-4. Set the build environment Node.js version to 24. Select `main` as the production branch.
-
-### Option 3: Automated via GitHub Actions
-
-Add `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` to your GitHub Repository Secrets. Every push to `main` will automatically build and deploy via `.github/workflows/deploy.yml`.
-
----
+Review the Cloudflare compatibility date when adopting new Worker behavior. The static site has no runtime bindings to migrate. Keep local `.env*` and `.dev.vars*` credentials out of git.
 
 ## License
 
-Personal site content &copy; Scott Smerchek.
-
-## Verification
-
-Run `npm run check`, `npm test`, and `npx wrangler deploy --dry-run` before deployment. The regression test builds with a draft fixture, checks that it never appears in pages or feeds, then produces a clean production build. `npm run preview:cf` serves the build with Cloudflare routing and headers locally.
+Personal site content © Scott Smerchek.
