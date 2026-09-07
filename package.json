@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "@types/node": "^24.13.3",
-    "typescript": "^5.7.0",
+    "typescript": "^7.0.2",
     "wrangler": "^4.129.0"
   },
   "engines": {
