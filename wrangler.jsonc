@@ -1,6 +1,12 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "scottsmerchek-com",
+  "account_id": "a387e1b89aa4a9d148ef125af2a3f718",
+  "workers_dev": true,
+  "routes": [
+    { "pattern": "scottsmerchek.com", "custom_domain": true },
+    { "pattern": "www.scottsmerchek.com", "custom_domain": true }
+  ],
   "compatibility_date": "2026-09-02",
   "assets": {
     "directory": "./dist",
@@ -8,6 +14,7 @@
     "html_handling": "auto-trailing-slash"
   },
   "observability": {
-    "enabled": true
+    "enabled": true,
+    "traces": { "enabled": true }
   }
 }
