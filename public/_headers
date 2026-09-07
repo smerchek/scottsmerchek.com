@@ -1,0 +1,29 @@
+# Security headers for all routes
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+
+# Long-term immutable caching for hashed Astro assets
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Favicons and static images
+/images/*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+/favicon.ico
+  Cache-Control: public, max-age=86400
+
+# Feeds and sitemaps
+/rss.xml
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+  Content-Type: application/rss+xml; charset=utf-8
+
+/feed.xml
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+  Content-Type: application/rss+xml; charset=utf-8
+
+/sitemap-index.xml
+  Cache-Control: public, max-age=3600

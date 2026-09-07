@@ -1,0 +1,167 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getPublishedPosts } from '../lib/posts';
+
+const sortedPosts = (await getPublishedPosts()).slice(0, 4);
+
+function formatDate(date: Date) {
+  return new Intl.DateTimeFormat('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    timeZone: 'UTC',
+  }).format(date);
+}
+---
+
+<Layout>
+  <div class="relative overflow-hidden">
+    <!-- Decorative background patterns matching original layout -->
+    <div class="absolute inset-y-0 block h-full w-full pointer-events-none" aria-hidden="true">
+      <div class="relative mx-auto h-full max-w-7xl">
+        <svg
+          class="absolute right-full translate-y-1/4 translate-x-1/4 transform lg:translate-x-1/2 opacity-60 dark:opacity-20"
+          width="404"
+          height="784"
+          fill="none"
+          viewBox="0 0 404 784"
+        >
+          <defs>
+            <pattern
+              id="f210dbf6-a58d-4871-961e-36d5016a0f49"
+              x="0"
+              y="0"
+              width="20"
+              height="20"
+              patternUnits="userSpaceOnUse"
+            >
+              <rect
+                x="0"
+                y="0"
+                width="4"
+                height="4"
+                class="text-gray-200 dark:text-gray-700"
+                fill="currentColor"
+              />
+            </pattern>
+          </defs>
+          <rect width="404" height="784" fill="url(#f210dbf6-a58d-4871-961e-36d5016a0f49)" />
+        </svg>
+        <svg
+          class="absolute left-full -translate-y-3/4 -translate-x-1/4 transform md:-translate-y-1/2 lg:-translate-x-1/2 opacity-60 dark:opacity-20"
+          width="404"
+          height="784"
+          fill="none"
+          viewBox="0 0 404 784"
+        >
+          <defs>
+            <pattern
+              id="5d0dd344-b041-4d26-bec4-8d33ea57ec9b"
+              x="0"
+              y="0"
+              width="20"
+              height="20"
+              patternUnits="userSpaceOnUse"
+            >
+              <rect
+                x="0"
+                y="0"
+                width="4"
+                height="4"
+                class="text-gray-200 dark:text-gray-700"
+                fill="currentColor"
+              />
+            </pattern>
+          </defs>
+          <rect width="404" height="784" fill="url(#5d0dd344-b041-4d26-bec4-8d33ea57ec9b)" />
+        </svg>
+      </div>
+    </div>
+
+    <!-- Hero Section -->
+    <div class="relative pt-12 pb-16 sm:pb-24">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col items-center sm:flex-row">
+          <img
+            src="/images/profile.jpg"
+            alt="head shot of Scott"
+            class="inline-block h-40 w-40 rounded-full md:h-80 md:w-80 object-cover shadow-lg ring-4 ring-white dark:ring-gray-800"
+          />
+          <div class="mt-6 sm:mt-0 sm:ml-10 text-center sm:text-left">
+            <h1 class="text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white sm:text-5xl md:text-6xl">
+              <span class="block xl:inline">Hi, I'm </span>{' '}
+              <span class="block text-blue-600 dark:text-blue-400 xl:inline">Scott</span>
+            </h1>
+            <p class="mt-4 max-w-md sm:max-w-xl text-base leading-7 text-gray-600 dark:text-gray-300 sm:text-lg md:text-xl">
+              I build{' '}
+              <a
+                class="border-b-4 border-[#F17125] pb-0.5 hover:text-gray-900 dark:hover:text-white transition-colors"
+                href="https://udisc.com"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                things
+              </a>{' '}
+              for the web, mostly with{' '}
+              <a
+                href="https://remix.run"
+                class="border-b-4 border-[#d83bd2] pb-0.5 hover:text-gray-900 dark:hover:text-white transition-colors"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Remix
+              </a>
+              .
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Writing Section -->
+    <section class="relative border-t border-gray-200 dark:border-gray-800 bg-white/50 dark:bg-gray-900/50 py-16 transition-colors">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-baseline mb-8">
+          <h2 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+            Recent Writing
+          </h2>
+          <a
+            href="/blog"
+            class="text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 transition-colors"
+          >
+            View all posts &rarr;
+          </a>
+        </div>
+
+        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          {sortedPosts.map((post) => (
+            <a
+              href={`/blog/${post.id}`}
+              class="group relative flex flex-col justify-between rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 shadow-xs hover:shadow-md hover:border-gray-300 dark:hover:border-gray-700 transition-all"
+            >
+              <div>
+                <time
+                  datetime={post.data.pubDate.toISOString()}
+                  class="text-xs font-medium text-gray-500 dark:text-gray-400"
+                >
+                  {formatDate(post.data.pubDate)}
+                </time>
+                <h3 class="mt-2 text-lg font-semibold text-gray-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                  {post.data.title}
+                </h3>
+                {post.data.description && (
+                  <p class="mt-2 text-sm text-gray-600 dark:text-gray-300 line-clamp-2">
+                    {post.data.description}
+                  </p>
+                )}
+              </div>
+              <div class="mt-4 flex items-center text-xs font-medium text-indigo-600 dark:text-indigo-400">
+                Read post &rarr;
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  </div>
+</Layout>

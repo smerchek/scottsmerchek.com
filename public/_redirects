@@ -1,0 +1,14 @@
+# Legacy Jekyll date-slug URLs redirect to /blog/:slug
+/2012/01/23/codemash-2012-there-and-back-again  /blog/codemash-2012-there-and-back-again  301
+/2012/01/26/dealing-with-information-overload  /blog/dealing-with-information-overload  301
+/2012/01/31/discipline-in-software-development-and-in-life  /blog/discipline-in-software-development-and-in-life  301
+/2012/02/08/area-users-groups-a-collaborative-approach  /blog/area-users-groups-a-collaborative-approach  301
+/2012/02/8/area-users-groups-a-collaborative-approach  /blog/area-users-groups-a-collaborative-approach  301
+/2012/02/16/working-on-interesting-problems  /blog/working-on-interesting-problems  301
+/2012/02/20/speaking-about-solr-at-kcdc  /blog/speaking-about-solr-at-kcdc  301
+/2015/07/24/pushing-to-google-container-registry-from-circleci  /blog/pushing-to-google-container-registry-from-circleci  301
+/2015/08/03/taking-the-d-out-of-crud  /blog/taking-the-d-out-of-crud  301
+/2015/08/04/taking-the-d-out-of-crud-with-soft-updates  /blog/taking-the-d-out-of-crud-with-soft-updates  301
+
+# General wildcard rule for any date-formatted slug
+/:year/:month/:date/:slug  /blog/:slug  301

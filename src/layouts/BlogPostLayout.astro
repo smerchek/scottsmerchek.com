@@ -1,0 +1,90 @@
+---
+import Layout from './Layout.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  pubDate: Date;
+  categories?: string[];
+  readingTime?: string;
+}
+
+const { title, description, pubDate, categories = [], readingTime } = Astro.props;
+
+const formattedDate = new Intl.DateTimeFormat('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+  timeZone: 'UTC',
+}).format(pubDate);
+---
+
+<Layout title={title} description={description} article={true}>
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Back to blog link -->
+    <div class="mb-8">
+      <a
+        href="/blog"
+        class="inline-flex items-center text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 transition-colors"
+      >
+        <svg class="mr-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        Back to all posts
+      </a>
+    </div>
+
+    <!-- Post Header -->
+    <header class="mb-10 pb-8 border-b border-gray-200 dark:border-gray-800">
+      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-gray-900 dark:text-white mb-4">
+        {title}
+      </h1>
+
+      <div class="flex flex-wrap items-center gap-3 text-sm text-gray-500 dark:text-gray-400">
+        <time datetime={pubDate.toISOString()}>
+          {formattedDate}
+        </time>
+        {readingTime && (
+          <>
+            <span>&bull;</span>
+            <span>{readingTime}</span>
+          </>
+        )}
+      </div>
+
+      {categories.length > 0 && (
+        <div class="flex flex-wrap gap-2 mt-4">
+          {categories.map((cat) => (
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300">
+              #{cat}
+            </span>
+          ))}
+        </div>
+      )}
+    </header>
+
+    <!-- Post Content -->
+    <article class="prose prose-lg dark:prose-invert max-w-none prose-headings:font-bold prose-a:text-indigo-600 dark:prose-a:text-indigo-400 prose-img:rounded-xl">
+      <slot />
+    </article>
+
+    <!-- Post Footer -->
+    <div class="mt-16 pt-8 border-t border-gray-200 dark:border-gray-800 flex justify-between items-center">
+      <a
+        href="/blog"
+        class="inline-flex items-center text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 transition-colors"
+      >
+        <svg class="mr-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        Back to all posts
+      </a>
+      <a
+        href="#top"
+        class="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
+      >
+        Back to top &uarr;
+      </a>
+    </div>
+  </div>
+</Layout>
