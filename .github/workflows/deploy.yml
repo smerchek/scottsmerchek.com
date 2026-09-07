@@ -42,10 +42,14 @@ jobs:
         shell: bash
         run: |
           if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
-            echo "::notice::Verification passed. Deployment skipped: CLOUDFLARE_API_TOKEN is not configured. Use npm run deploy locally."
-            exit 0
+            echo "::error::CLOUDFLARE_API_TOKEN is missing. Restore the deployment secret from Private 1Password."
+            exit 1
           fi
-          npx wrangler deploy
+          # Upload and deploy only this run's version. Domain/route management
+          # stays with local Wrangler OAuth, outside the CI token's permissions.
+          deployment_tag="github-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          npx wrangler versions upload --tag "$deployment_tag"
+          npx wrangler versions deploy --version-tag "$deployment_tag@100" --yes
           npm run smoke
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}

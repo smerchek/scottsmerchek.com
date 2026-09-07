@@ -26,7 +26,7 @@ Write your post here.
 
 3. Run `npm run dev` to preview the site. Draft posts are excluded from the site, including development pages and feeds. To preview the article locally, temporarily set `draft: false`; restore it before committing if it is not ready to publish.
 4. When ready, set `draft: false`, run `npm run validate`, and commit and push the post. Review a branch/PR first when useful.
-5. Run `npm run deploy` from the reviewed commit on `main`. **Pushing alone does not currently publish:** GitHub CI verifies the build, but no deployment token is configured yet.
+5. Push the reviewed commit to `main`. GitHub Actions validates, uploads a Worker version, deploys that exact version, and runs production smoke checks. PRs run validation only. Watch the CI & Deploy workflow for the publishing result; `npm run deploy` remains available for manual deployment.
 
 The homepage, blog index, RSS feeds (`/rss.xml` and `/feed.xml`), and sitemap update at build time. Optional metadata includes `updatedDate`, `tags`, and `categories`. A future `pubDate` does not schedule publication: `draft` is the publication switch. Keep published filenames stable; if you rename one, add an explicit 301 in `public/_redirects`.
 
@@ -56,14 +56,17 @@ Authenticate locally with `npx wrangler login`, then use `npm run deploy`. This 
 
 Cloudflare's zone-level **Redirect Rules** entry `Redirect from WWW to Root [Template]` (ID `45cd3de155464e1bbe9500d5c48523d6`) handles HTTPS `www` to apex with a 301 and preserves paths and query strings. HTTP `www` first upgrades to HTTPS, then redirects to apex. This rule lives in the Cloudflare dashboard, separately from Wrangler. Do not remove it when editing Worker domains. Legacy article redirects are in `public/_redirects`; cache and security headers are in `public/_headers`.
 
-### Enabling automatic deployments
+### Automatic deployments and credential rotation
 
-Choose one deployment system to avoid duplicate deploys:
+GitHub Actions is the production deployment system. Every push to `main` validates, uploads a version tagged with the workflow run ID and attempt, deploys that exact version at 100%, and verifies production. The workflow can also be run manually. Cloudflare Builds is not connected, avoiding duplicate deployments.
 
-- **GitHub Actions:** add a Cloudflare deployment API token as the repository secret `CLOUDFLARE_API_TOKEN`. The account ID is already in `wrangler.jsonc`. The existing workflow validates every push/PR and deploys `main` when the secret exists. Without it, CI explicitly reports that deployment was skipped. PRs never deploy production.
-- **Cloudflare Builds:** connect the existing Worker under Settings → Builds to `smerchek/scottsmerchek.com`, production branch `main`, with Node 24. Build command: `npm run validate`; deploy command: `npx wrangler deploy && npm run smoke`. Leave the GitHub deployment secret unset if using Cloudflare Builds.
+The repository secret `CLOUDFLARE_API_TOKEN` holds the account-owned token **scottsmerchek-com GitHub deploy**, also stored as a concealed password in the **Private** 1Password vault under that same title. It expires **September 7, 2027**. Rotate it before expiration and update both 1Password and the GitHub Actions secret together.
 
-The Cloudflare Builds connection and creation of its deployment token have not been approved/completed in this setup. No Fly secret is used by the new workflow. The old repository `FLY_API_TOKEN` can be removed when retiring Fly.
+Its only permission is **Workers Scripts Write** on the personal Cloudflare account. Cloudflare cannot limit this permission to deployment-only or a single Worker; it can edit/delete Workers in that account. It has no DNS, storage, billing, or account-management permissions. CI uses `wrangler versions upload` and `wrangler versions deploy` instead of reconciling domains. Domain changes remain in `wrangler.jsonc` and are applied with local Wrangler OAuth.
+
+For rotation, create a replacement with the same permission, save it securely, update the Actions secret, and verify a successful workflow before revoking the previous token. Never paste tokens into commits, issue comments, or workflow files. A missing or expired token causes production deployment to fail visibly.
+
+No Fly secret is used by this workflow. The old repository `FLY_API_TOKEN` can be removed when retiring Fly.
 
 For a bad content release, revert the offending commit, validate, and redeploy. Cloudflare also retains deployment versions for operational rollback; follow its current rollback instructions and verify production afterward.
 
