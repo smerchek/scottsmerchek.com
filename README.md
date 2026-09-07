@@ -72,7 +72,9 @@ npm run preview
 
 We use **Cloudflare Workers with Static Assets** configured in [`wrangler.jsonc`](./wrangler.jsonc), for this static site. No server adapter, database, Fly secrets, or persistent volume is needed.
 
-Deployment is intentionally left for the next machine. Choose one automation method to avoid duplicate deployments. Keep Fly running until the Worker and custom domain are verified, then retire the old app.
+Production runs on Worker `scottsmerchek-com` in the personal Cloudflare account. The DNS cutover completed on September 7, 2026, and HTTPS, all 12 posts, feeds, sitemap, legacy redirects, and 404 handling were verified. `www.scottsmerchek.com` redirects to the apex and preserves paths and query strings.
+
+Both custom domains are managed in `wrangler.jsonc`. The preview URL is https://scottsmerchek-com.scott-smerchek.workers.dev. Fly machines are retained for manual removal. Automatic deployment is not yet enabled; choose one automation method below to avoid duplicate deployments.
 
 ### Option 1: Deploy with Wrangler CLI (Fastest)
 
@@ -84,7 +86,7 @@ npx wrangler login
 npm run deploy
 ```
 
-Custom domains (`scottsmerchek.com`) can be assigned directly to your Worker under **Settings &rarr; Domains & Routes** in the Cloudflare dashboard.
+`npm run deploy` deploys the static build and reconciles both custom domains from `wrangler.jsonc`.
 
 ### Option 2: Automatic Git Deployments via Cloudflare Dashboard
 
